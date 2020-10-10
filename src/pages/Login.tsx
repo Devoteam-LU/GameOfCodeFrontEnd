@@ -59,6 +59,7 @@ const Login: React.FC = () => {
       })
       .then((res) => {
         login(res.data);
+        history.push('')
       })
       .catch((error) => {
         setMessage("Auth failure! Please create an account");

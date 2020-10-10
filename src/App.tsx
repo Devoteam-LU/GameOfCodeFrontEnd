@@ -39,6 +39,7 @@ import { AuthContext } from "./modules/auth";
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import Match from "./pages/Match/Match";
 
 const App: React.FC = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -65,7 +66,7 @@ console.log(isAuthenticated)
               <></>
             )}
             {isAuthenticated ? (
-              <Route path="/tab2" component={Tab2} exact={true} />
+              <Route path="/matchInvestment" component={Match} exact={true} />
             ) : (
               <Redirect from="/tab2" to="/login" exact />
             )}
@@ -86,7 +87,7 @@ console.log(isAuthenticated)
               <DashboardIcon color="primary"/>
               <IonLabel color="primary">Life</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="tab2" href="/tab2">
+            <IonTabButton tab="match" href="/matchInvestment">
               <FavoriteBorderIcon color="primary"/>
               <IonLabel color="primary">Match</IonLabel>
             </IonTabButton>
