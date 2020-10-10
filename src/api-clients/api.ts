@@ -43,6 +43,8 @@ export const getApiUrl = () => "https://privilege-api.azurewebsites.net";
 
 
 
+
+
 /* tslint:disable */
 /* eslint-disable */
 //----------------------
@@ -618,10 +620,145 @@ export class LenderProjectApi {
     }
 }
 
+export class UserInterestApi {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    listByUserId(): Promise<string[]> {
+        let url_ = this.baseUrl + "/ListByUserId";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processListByUserId(_response);
+        });
+    }
+
+    protected processListByUserId(response: Response): Promise<string[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(item);
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<string[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    listInterestingProjectsByUserId(): Promise<ProjectDto[]> {
+        let url_ = this.baseUrl + "/ListInterestingProjectsByUserId";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processListInterestingProjectsByUserId(_response);
+        });
+    }
+
+    protected processListInterestingProjectsByUserId(response: Response): Promise<ProjectDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ProjectDto.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ProjectDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    listInterestingPeopleByUserId(): Promise<UserDto[]> {
+        let url_ = this.baseUrl + "/ListInterestingPeopleByUserId";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processListInterestingPeopleByUserId(_response);
+        });
+    }
+
+    protected processListInterestingPeopleByUserId(response: Response): Promise<UserDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(UserDto.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserDto[]>(<any>null);
+    }
+}
+
 export class UserDto implements IUserDto {
     id?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    interests?: string[] | undefined;
 
     constructor(data?: IUserDto) {
         if (data) {
@@ -637,6 +774,11 @@ export class UserDto implements IUserDto {
             this.id = _data["id"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
+            if (Array.isArray(_data["interests"])) {
+                this.interests = [] as any;
+                for (let item of _data["interests"])
+                    this.interests!.push(item);
+            }
         }
     }
 
@@ -652,6 +794,11 @@ export class UserDto implements IUserDto {
         data["id"] = this.id;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
+        if (Array.isArray(this.interests)) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item);
+        }
         return data; 
     }
 }
@@ -660,6 +807,7 @@ export interface IUserDto {
     id?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    interests?: string[] | undefined;
 }
 
 export class LoginDto implements ILoginDto {
@@ -763,6 +911,8 @@ export class ProjectDto implements IProjectDto {
     createdByUserId?: string | undefined;
     creationDate?: Date;
     description?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
     id?: number;
     title?: string | undefined;
 
@@ -781,6 +931,8 @@ export class ProjectDto implements IProjectDto {
             this.createdByUserId = _data["createdByUserId"];
             this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
             this.description = _data["description"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
             this.id = _data["id"];
             this.title = _data["title"];
         }
@@ -799,6 +951,8 @@ export class ProjectDto implements IProjectDto {
         data["createdByUserId"] = this.createdByUserId;
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         data["description"] = this.description;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
         data["id"] = this.id;
         data["title"] = this.title;
         return data; 
@@ -810,6 +964,8 @@ export interface IProjectDto {
     createdByUserId?: string | undefined;
     creationDate?: Date;
     description?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
     id?: number;
     title?: string | undefined;
 }
