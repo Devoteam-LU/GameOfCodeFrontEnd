@@ -45,7 +45,6 @@ export const getApiUrl = () => "https://privilege-api.azurewebsites.net";
 
 
 
-
 /* tslint:disable */
 /* eslint-disable */
 //----------------------
@@ -487,6 +486,43 @@ export class ContractApi {
         }
         return Promise.resolve<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    userSituation(): Promise<UserBorrowLendSituationDto> {
+        let url_ = this.baseUrl + "/api/Contract/UserSituation";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUserSituation(_response);
+        });
+    }
+
+    protected processUserSituation(response: Response): Promise<UserBorrowLendSituationDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = UserBorrowLendSituationDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserBorrowLendSituationDto>(<any>null);
+    }
 }
 
 export class LenderProjectApi {
@@ -760,6 +796,8 @@ export class UserDto implements IUserDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     interests?: string[] | undefined;
+    creditScore?: number;
+    apy?: number;
 
     constructor(data?: IUserDto) {
         if (data) {
@@ -780,6 +818,8 @@ export class UserDto implements IUserDto {
                 for (let item of _data["interests"])
                     this.interests!.push(item);
             }
+            this.creditScore = _data["creditScore"];
+            this.apy = _data["apy"];
         }
     }
 
@@ -800,6 +840,8 @@ export class UserDto implements IUserDto {
             for (let item of this.interests)
                 data["interests"].push(item);
         }
+        data["creditScore"] = this.creditScore;
+        data["apy"] = this.apy;
         return data; 
     }
 }
@@ -809,6 +851,8 @@ export interface IUserDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     interests?: string[] | undefined;
+    creditScore?: number;
+    apy?: number;
 }
 
 export class LoginDto implements ILoginDto {
@@ -1054,6 +1098,66 @@ export interface IContractDto {
     clause?: string | undefined;
     amount?: number;
     interestRate?: number;
+}
+
+export class UserBorrowLendSituationDto implements IUserBorrowLendSituationDto {
+    totalBorrowingAmount?: number;
+    totalBorrowingWithInterestRate?: number;
+    readonly borrowLossProfit?: number;
+    totalLendingAmount?: number;
+    totalLendingWithInterestRate?: number;
+    readonly lendLossProfit?: number;
+    readonly totalLossProfit?: number;
+
+    constructor(data?: IUserBorrowLendSituationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalBorrowingAmount = _data["totalBorrowingAmount"];
+            this.totalBorrowingWithInterestRate = _data["totalBorrowingWithInterestRate"];
+            (<any>this).borrowLossProfit = _data["borrowLossProfit"];
+            this.totalLendingAmount = _data["totalLendingAmount"];
+            this.totalLendingWithInterestRate = _data["totalLendingWithInterestRate"];
+            (<any>this).lendLossProfit = _data["lendLossProfit"];
+            (<any>this).totalLossProfit = _data["totalLossProfit"];
+        }
+    }
+
+    static fromJS(data: any): UserBorrowLendSituationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserBorrowLendSituationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalBorrowingAmount"] = this.totalBorrowingAmount;
+        data["totalBorrowingWithInterestRate"] = this.totalBorrowingWithInterestRate;
+        data["borrowLossProfit"] = this.borrowLossProfit;
+        data["totalLendingAmount"] = this.totalLendingAmount;
+        data["totalLendingWithInterestRate"] = this.totalLendingWithInterestRate;
+        data["lendLossProfit"] = this.lendLossProfit;
+        data["totalLossProfit"] = this.totalLossProfit;
+        return data; 
+    }
+}
+
+export interface IUserBorrowLendSituationDto {
+    totalBorrowingAmount?: number;
+    totalBorrowingWithInterestRate?: number;
+    borrowLossProfit?: number;
+    totalLendingAmount?: number;
+    totalLendingWithInterestRate?: number;
+    lendLossProfit?: number;
+    totalLossProfit?: number;
 }
 
 export class ApiException extends Error {

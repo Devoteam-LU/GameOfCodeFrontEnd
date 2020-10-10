@@ -38,17 +38,11 @@ const ProjectsMatch: React.FC = () => {
       {interestingProjects && (
         <>
           <IonListHeader>Suggested for you</IonListHeader>
-          <IonSlides>
             {interestingProjects.map((i) => {
               return (
-                <IonSlide
-                  key={"suggestedProject_" + i.createdByUserId + "_" + i.id}
-                >
-                  <ProjectCard project={i} />
-                </IonSlide>
+                  <ProjectCard key={"suggestedProject_" + i.createdByUserId + "_" + i.id} project={i} />
               );
             })}
-          </IonSlides>
         </>
       )}
     </>

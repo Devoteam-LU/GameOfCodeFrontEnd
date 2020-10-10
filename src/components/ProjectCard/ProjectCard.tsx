@@ -73,9 +73,15 @@ export default function ProjectCard({ project }: IProps) {
         <div>
           <p style={{ textAlign: "justify" }}>{project.description}</p>
         </div>
-        <IonCardTitle style={{ textAlign: "right" }}>
-          {project.budget?.toFixed(2)}
-        </IonCardTitle>
+        <h1 style={{ textAlign: "right" }}>€ {project.budget?.toFixed(2)}</h1>
+        {project.interestRate != null && project.interestRate > 0 && (
+          <h1 style={{ textAlign: "right" }}>
+            {project.interestRate * 100} % interest rate
+          </h1>
+        )}
+        {project.isInterestRateFlexible && (
+          <h1 style={{ textAlign: "right" }}>Flexible interest rate</h1>
+        )}
       </IonCardContent>
       <IonItem>
         <IonIcon
