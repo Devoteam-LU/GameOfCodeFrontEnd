@@ -50,7 +50,7 @@ const Match: React.FC = () => {
               );
             })}
         </p>
-        <ProfilesMatch />
+        {/* <ProfilesMatch /> */}
         <ProjectsMatch />
       </IonContent>
     </IonPage>

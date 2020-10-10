@@ -37,7 +37,7 @@ const ProjectsMatch: React.FC = () => {
     <>
       {interestingProjects && (
         <>
-          <IonListHeader>Projects suggested for you</IonListHeader>
+          <IonListHeader>Suggested for you</IonListHeader>
           <IonSlides>
             {interestingProjects.map((i) => {
               return (

@@ -45,6 +45,7 @@ export const getApiUrl = () => "https://privilege-api.azurewebsites.net";
 
 
 
+
 /* tslint:disable */
 /* eslint-disable */
 //----------------------
@@ -906,6 +907,11 @@ export interface IApplicationUserDto {
     dateOfBirth?: Date;
 }
 
+export enum ProjectType {
+    _0 = 0,
+    _1 = 1,
+}
+
 export class ProjectDto implements IProjectDto {
     budget?: number;
     createdByUserId?: string | undefined;
@@ -915,6 +921,10 @@ export class ProjectDto implements IProjectDto {
     lastName?: string | undefined;
     id?: number;
     title?: string | undefined;
+    imageUrl?: string | undefined;
+    projectType?: ProjectType;
+    interestRate?: number;
+    isInterestRateFlexible?: boolean;
 
     constructor(data?: IProjectDto) {
         if (data) {
@@ -935,6 +945,10 @@ export class ProjectDto implements IProjectDto {
             this.lastName = _data["lastName"];
             this.id = _data["id"];
             this.title = _data["title"];
+            this.imageUrl = _data["imageUrl"];
+            this.projectType = _data["projectType"];
+            this.interestRate = _data["interestRate"];
+            this.isInterestRateFlexible = _data["isInterestRateFlexible"];
         }
     }
 
@@ -955,6 +969,10 @@ export class ProjectDto implements IProjectDto {
         data["lastName"] = this.lastName;
         data["id"] = this.id;
         data["title"] = this.title;
+        data["imageUrl"] = this.imageUrl;
+        data["projectType"] = this.projectType;
+        data["interestRate"] = this.interestRate;
+        data["isInterestRateFlexible"] = this.isInterestRateFlexible;
         return data; 
     }
 }
@@ -968,6 +986,10 @@ export interface IProjectDto {
     lastName?: string | undefined;
     id?: number;
     title?: string | undefined;
+    imageUrl?: string | undefined;
+    projectType?: ProjectType;
+    interestRate?: number;
+    isInterestRateFlexible?: boolean;
 }
 
 export class ContractDto implements IContractDto {
