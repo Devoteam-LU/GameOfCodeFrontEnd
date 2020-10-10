@@ -1,5 +1,12 @@
 import React from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonContent, IonHeader,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonSearchbar,
+  IonButtons,
+  IonMenuButton,
+   IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './DealTabPage.css';
 
@@ -8,16 +15,25 @@ const DealTabPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Deal</IonTitle>
+          <IonGrid>
+            <IonRow>
+              <IonCol  size="2">
+                <IonHeader>
+                  Deal
+                </IonHeader>
+              </IonCol>
+              <IonCol size="10">
+                <IonSearchbar ></IonSearchbar>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+          <IonButtons slot="end">
+            <IonMenuButton />
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Deal</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <ExploreContainer name="Deal Tab Page" />
+      <IonContent>
+        
       </IonContent>
     </IonPage>
   );
