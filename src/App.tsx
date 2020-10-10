@@ -39,7 +39,7 @@ import { AuthContext } from "./modules/auth";
 
 const App: React.FC = () => {
   const { isAuthenticated } = useContext(AuthContext);
-
+console.log(isAuthenticated)
   return (
     <IonApp>
       <IonReactRouter>
@@ -48,13 +48,13 @@ const App: React.FC = () => {
             {!isAuthenticated ? (
               <Route path="/login" component={Login} exact={true} />
             ) : (
-              <></>
+              <Redirect from="/login" to="/tab1" exact />
             )}
             {!isAuthenticated ? <Redirect to="/login" exact /> : <></>}
             {isAuthenticated ? (
               <Route path="/tab1" component={Tab1} exact={true} />
             ) : (
-              <></>
+              <Redirect from="/tab1" to="/login" exact />
             )}
             {isAuthenticated ? (
               <Route path="/dashboard/:id" component={Dashboard} exact={true} />
@@ -64,7 +64,7 @@ const App: React.FC = () => {
             {isAuthenticated ? (
               <Route path="/tab2" component={Tab2} exact={true} />
             ) : (
-              <></>
+              <Redirect from="/tab2" to="/login" exact />
             )}
             {isAuthenticated ? <Route path="/tab3" component={Tab3} /> : <></>}
             {isAuthenticated ? (
@@ -74,8 +74,9 @@ const App: React.FC = () => {
                 exact={true}
               />
             ) : (
-              <></>
+              <Redirect from="/" to="/login" exact />
             )}
+            <Redirect to="/login" exact />
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
             <IonTabButton tab="tab1" href="/tab1">

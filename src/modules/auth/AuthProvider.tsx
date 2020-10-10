@@ -1,31 +1,44 @@
 /* eslint-disable import/prefer-default-export */
 import React, { PropsWithChildren, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
-import { User } from "../../types";
+import { ApplicationUserApi, getApiUrl, UserDto } from "../../api-clients/api";
+import { setuid } from "process";
 
-const SESSION_STORAGE_USER_KEY = "user";
-
-const getUserFromSessionUser = (sessionUser: string | null) =>
-  sessionUser ? (JSON.parse(sessionUser) as User) : undefined;
+export const SESSION_STORAGE_USER_KEY = "token";
 
 export const AuthProvider = ({ children }: PropsWithChildren<unknown>) => {
-  const sessionUser = localStorage.getItem(SESSION_STORAGE_USER_KEY);
-  const [user, setUser] = useState<User | undefined>(
-    getUserFromSessionUser(sessionUser)
+  const [sessionUser, setSessionUser] = useState<string | null>(localStorage.getItem(SESSION_STORAGE_USER_KEY));
+  const [applicationUserApi] = useState<ApplicationUserApi>(
+    new ApplicationUserApi(getApiUrl())
   );
-  const isAuthenticated = !!user?.firstName;
+  const [user, setUser] = useState<UserDto | undefined>(
+    undefined
+  );
+
+  const isAuthenticated = sessionUser != null;
 
   const logout = () => {
     setUser(undefined);
     localStorage.removeItem(SESSION_STORAGE_USER_KEY);
+    setSessionUser(null);
+  };
+
+  const login = (token : string) => {
+    setUser(undefined);
+    localStorage.setItem(SESSION_STORAGE_USER_KEY, token);
+    setSessionUser(token);
   };
 
   useEffect(() => {
     if (!user && sessionUser) {
-      setUser(getUserFromSessionUser(sessionUser));
-    } else if (user) {
-      localStorage.setItem(SESSION_STORAGE_USER_KEY, JSON.stringify(user));
+      applicationUserApi.userProfile().then(res => {
+        setUser(res);
+      })
+      .catch(err => {
+        console.log(err)
+      })
     }
+
   }, [user, sessionUser]);
 
   return (
@@ -35,6 +48,7 @@ export const AuthProvider = ({ children }: PropsWithChildren<unknown>) => {
         user,
         setUser,
         logout,
+        login
       }}
     >
       {children}
