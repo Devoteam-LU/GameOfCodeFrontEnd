@@ -36,6 +36,9 @@ import "./theme/variables.css";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Profile";
 import { AuthContext } from "./modules/auth";
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 
 const App: React.FC = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -80,16 +83,16 @@ console.log(isAuthenticated)
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
             <IonTabButton tab="tab1" href="/tab1">
-              <IonIcon icon={triangle} />
-              <IonLabel>Tab 1</IonLabel>
+              <DashboardIcon color="primary"/>
+              <IonLabel color="primary">Life</IonLabel>
             </IonTabButton>
             <IonTabButton tab="tab2" href="/tab2">
-              <IonIcon icon={ellipse} />
-              <IonLabel>Tab 2</IonLabel>
+              <FavoriteBorderIcon color="primary"/>
+              <IonLabel color="primary">Match</IonLabel>
             </IonTabButton>
             <IonTabButton tab="tab3" href="/tab3">
-              <IonIcon icon={square} />
-              <IonLabel>Tab 3</IonLabel>
+              <SupervisorAccountIcon color="primary"/>
+              <IonLabel color="primary">Deals</IonLabel>
             </IonTabButton>
           </IonTabBar>
         </IonTabs>
