@@ -7,7 +7,13 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonListHeader
+  IonListHeader,
+  IonGrid,
+  IonCol,
+  IonRow,
+  IonSearchbar,
+  IonButtons,
+  IonMenuButton
 } from "@ionic/react";
 import "./Match.css";
 import { UserInterestApi, getApiUrl } from "../../api-clients/api";
@@ -35,7 +41,21 @@ const Match: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Match</IonTitle>
+          <IonGrid>
+            <IonRow>
+              <IonCol  size="2">
+                <IonHeader>
+                  Matc
+                </IonHeader>
+              </IonCol>
+              <IonCol size="10">
+                <IonSearchbar ></IonSearchbar>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+          <IonButtons slot="end">
+            <IonMenuButton />
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>

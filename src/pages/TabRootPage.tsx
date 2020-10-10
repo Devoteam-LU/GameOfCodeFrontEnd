@@ -9,7 +9,7 @@ import React, { useContext } from "react";
 import { Redirect, Route } from "react-router";
 import "./TabRootPage.css";
 import LifeTabPage from "./LifeTabPage";
-import MatchTabPage from "./MatchTabPage";
+import MatchTabPage from "./Match/Match";
 import DealTabPage from "./DealTabPage";
 import { AuthContext } from "../modules/auth";
 import DashboardIcon from '@material-ui/icons/Dashboard';
