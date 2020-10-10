@@ -25,7 +25,7 @@ const DealTabPage: React.FC = () => {
     contractApi.userSituation()
     .then(res => setProfitLoss(res))
     .catch(err => console.log(err));
-  }, [profitLoss]);
+  }, []);
 
   return (
     <IonPage>
