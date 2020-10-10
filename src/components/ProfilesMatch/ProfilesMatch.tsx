@@ -8,12 +8,13 @@ import {
   IonTitle,
   IonToolbar,
   IonListHeader,
+  IonSlides,
+  IonSlide,
 } from "@ionic/react";
 import { UserInterestApi, getApiUrl, UserDto } from "../../api-clients/api";
 import ProfileCard from "../ProfileCard/ProfileCard";
 
 const ProfilesMatch: React.FC = () => {
-
   const [userInterestApi, setUserInterestApi] = useState<UserInterestApi>(
     new UserInterestApi(getApiUrl())
   );
@@ -32,15 +33,20 @@ const ProfilesMatch: React.FC = () => {
 
   return (
     <>
-      <IonListHeader>Users suggested for you</IonListHeader>
-      <p>
-        {interestingUsers &&
-          interestingUsers.map((i) => {
-            return (
-              <ProfileCard key={i.id} user={i} />
-            );
-          })}
-      </p>
+      {interestingUsers && (
+        <>
+          <IonListHeader>Users suggested for you</IonListHeader>
+          <IonSlides>
+            {interestingUsers.map((i) => {
+              return (
+                <IonSlide key={i.id}>
+                  <ProfileCard user={i} />
+                </IonSlide>
+              );
+            })}
+          </IonSlides>
+        </>
+      )}
     </>
   );
 };

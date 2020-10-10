@@ -8,16 +8,19 @@ import {
   IonTitle,
   IonToolbar,
   IonListHeader,
+  IonSlides,
+  IonSlide,
 } from "@ionic/react";
 import { UserInterestApi, getApiUrl, ProjectDto } from "../../api-clients/api";
 import ProjectCard from "../ProjectCard/ProjectCard";
 
 const ProjectsMatch: React.FC = () => {
-
   const [userInterestApi, setUserInterestApi] = useState<UserInterestApi>(
     new UserInterestApi(getApiUrl())
   );
-  const [interestingProjects, setInterestingProjects] = useState<ProjectDto[]>();
+  const [interestingProjects, setInterestingProjects] = useState<
+    ProjectDto[]
+  >();
 
   useEffect(() => {
     userInterestApi
@@ -32,15 +35,22 @@ const ProjectsMatch: React.FC = () => {
 
   return (
     <>
-      <IonListHeader>Projects suggested for you</IonListHeader>
-      <p>
-        {interestingProjects &&
-          interestingProjects.map((i) => {
-            return (
-              <ProjectCard key={i.id} project={i} />
-            );
-          })}
-      </p>
+      {interestingProjects && (
+        <>
+          <IonListHeader>Projects suggested for you</IonListHeader>
+          <IonSlides>
+            {interestingProjects.map((i) => {
+              return (
+                <IonSlide
+                  key={"suggestedProject_" + i.createdByUserId + "_" + i.id}
+                >
+                  <ProjectCard project={i} />
+                </IonSlide>
+              );
+            })}
+          </IonSlides>
+        </>
+      )}
     </>
   );
 };

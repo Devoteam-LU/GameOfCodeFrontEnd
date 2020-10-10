@@ -14,17 +14,15 @@ interface IProps {
 
 export default function ProjectCard({ project }: IProps) {
   return (
-    <>
-      <IonCard>
-        <IonCardHeader>
-          <IonCardSubtitle>
-            {project.firstName} {project.lastName}
-          </IonCardSubtitle>
-          <IonCardTitle>{project.title}</IonCardTitle>
-        </IonCardHeader>
+    <IonCard>
+      <IonCardHeader>
+        <IonCardSubtitle>
+          {project.firstName} {project.lastName}
+        </IonCardSubtitle>
+        <IonCardTitle>{project.title}</IonCardTitle>
+      </IonCardHeader>
 
-        <IonCardContent>{project.description}</IonCardContent>
-      </IonCard>
-    </>
+      <IonCardContent>{project.description}</IonCardContent>
+    </IonCard>
   );
 }
