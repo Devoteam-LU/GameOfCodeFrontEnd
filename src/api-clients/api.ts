@@ -24,6 +24,18 @@ fetchIntercept.register({
   },
 });
 
+export const isLoggedin = () => {
+    return localStorage.getItem("token") != null;
+  };
+  
+  export const logout = () => {
+    if (isLoggedin()) localStorage.removeItem("token");
+  
+    
+  };
+
+export const getApiUrl = () => "https://privilege-api.azurewebsites.net/";
+
 
 
 /* tslint:disable */

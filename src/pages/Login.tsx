@@ -5,6 +5,7 @@ import { IonGrid, IonRow, IonCol } from '@ionic/react';
 import { personCircle } from "ionicons/icons";
 import { useHistory } from "react-router-dom";
 import { IonItem, IonLabel, IonInput, IonButton, IonIcon, IonAlert } from '@ionic/react';
+import { ApplicationUserApi, getApiUrl, LoginDto } from '../api-clients/api';
 
 function validateEmail(email: string) {
     const re = /^((?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]))$/;
@@ -12,18 +13,15 @@ function validateEmail(email: string) {
 }
 const Login: React.FC = () => {
   const history = useHistory();
-  const [email, setEmail] = useState<string>("eve.holt@reqres.in");
-  const [password, setPassword] = useState<string>("cityslicka");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [iserror, setIserror] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const [applicationUserApi] = useState<ApplicationUserApi>(new ApplicationUserApi(getApiUrl()));
+
   const handleLogin = () => {
-    if (!email) {
-        setMessage("Please enter a valid email");
-        setIserror(true);
-        return;
-    }
-    if (validateEmail(email) === false) {
-        setMessage("Your email is invalid");
+    if (!username || username.length == 0) {
+        setMessage("Please enter a valid username");
         setIserror(true);
         return;
     }
@@ -34,17 +32,8 @@ const Login: React.FC = () => {
         return;
     }
 
-    const loginData = {
-        "email": email,
-        "password": password
-    }
-
-    const api = axios.create({
-        baseURL: `https://reqres.in/api`
-    })
-    api.post("/login", loginData)
+    applicationUserApi.login({ username: username, password: password } as LoginDto)
         .then(res => {             
-            history.push("/dashboard/" + email);
          })
          .catch(error=>{
             setMessage("Auth failure! Please create an account");
@@ -84,11 +73,11 @@ const Login: React.FC = () => {
           <IonRow>
             <IonCol>
             <IonItem>
-            <IonLabel position="floating"> Email</IonLabel>
+            <IonLabel position="floating">Username</IonLabel>
             <IonInput
-                type="email"
-                value={email}
-                onIonChange={(e) => setEmail(e.detail.value!)}
+                type="text"
+                value={username}
+                onIonChange={(e) => setUsername(e.detail.value!)}
                 >
             </IonInput>
             </IonItem>
