@@ -29,9 +29,12 @@ const DealTabPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+      <div style={{ background: "#EBEBEB" }}>
+
         {contracts.map((contract, index) => (
           <ContractCard key={index} contract={contract} isNew={index === 2} />
         ))}
+        </div>
       </IonContent>
     </IonPage>
   );

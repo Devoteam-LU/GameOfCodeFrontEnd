@@ -37,38 +37,21 @@ export default function ProjectCard({ project }: IProps) {
       )} */}
       <IonCardHeader>
         <IonCardSubtitle style={{ textAlign: "left" }}>
-          {project.firstName} {project.lastName}
+          <span>
+            {project.firstName} {project.lastName}
+          </span>
+          <span style={{ float: "right" }}>Credit score | APY</span>
         </IonCardSubtitle>
         <IonCardTitle style={{ textAlign: "left" }}>
-          {project.title}
+          <span>{project.title}</span>
+          {project != null && project.apy != null && (
+          <span style={{ float: "right" }}>
+            {project?.creditScore} | {(project.apy * 100).toFixed(1)} %
+          </span>
+          )}
         </IonCardTitle>
       </IonCardHeader>
 
-      {/* <IonGrid>
-        <IonRow>
-          <IonCol>
-            {project.imageUrl && (
-              <img
-                style={{ maxHeight: "100px", textAlign: "left" }}
-                src={project.imageUrl}
-              />
-            )}
-          </IonCol>
-          <IonCol style={{ textAlign: "left" }}>
-            <div>
-              {project.firstName} {project.lastName}
-            </div>
-            <div>Credit score</div>
-            <div>Looking to borrow</div>
-          </IonCol>
-          <IonCol style={{ textAlign: "right" }}>
-            <div>{project.title}</div>
-            <div>740.0</div>
-            <div>10,000.00</div>
-          </IonCol>
-        </IonRow>
-      </IonGrid>
-       */}
       <IonCardContent>
         <div>
           <p style={{ textAlign: "justify" }}>{project.description}</p>
@@ -90,10 +73,10 @@ export default function ProjectCard({ project }: IProps) {
           }
           slot="start"
         />
-        <IonButton fill="outline" slot="end">
+        <IonButton slot="end" color="primary">
           Priviledge
         </IonButton>
-        <IonButton fill="outline" slot="end">
+        <IonButton slot="end" color="secondary">
           Chat
         </IonButton>
       </IonItem>

@@ -63,13 +63,13 @@ export default function ContractCard({ contract, isNew }: IProps) {
       <IonCardContent></IonCardContent>
       {isNew && (
         <IonItem>
-          <IonButton fill="outline" slot="end">
+          <IonButton color="warning" slot="end">
             Decline
           </IonButton>
-          <IonButton fill="outline" slot="end">
+          <IonButton color="tertiary" slot="end">
             Approve
           </IonButton>
-          <IonButton fill="outline" slot="end">
+          <IonButton color="secondary" slot="end">
             Chat
           </IonButton>
         </IonItem>

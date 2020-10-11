@@ -1,11 +1,17 @@
-import fetchIntercept from 'fetch-intercept';
+import fetchIntercept from "fetch-intercept";
 
 fetchIntercept.register({
   request: function (url, config) {
     // Modify the url or config here
     const token = localStorage.getItem("token");
 
-    return [url, { ...config, headers: {...config?.headers, Authorization: 'Bearer ' + token}}];
+    return [
+      url,
+      {
+        ...config,
+        headers: { ...config?.headers, Authorization: "Bearer " + token },
+      },
+    ];
   },
 
   requestError: function (error) {
@@ -15,9 +21,9 @@ fetchIntercept.register({
 
   response: function (response) {
     // Modify the reponse object
-    if(response.status === 401){
-        localStorage.removeItem("token")
-        window.location.href = '/login';
+    if (response.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
     }
 
     return response;
@@ -30,20 +36,16 @@ fetchIntercept.register({
 });
 
 export const isLoggedin = () => {
-    return localStorage.getItem("token") != null;
-  };
-  
-  export const logout = () => {
-    if (isLoggedin()) localStorage.removeItem("token");
-  
-    
-  };
+  return localStorage.getItem("token") != null;
+};
+
+export const logout = () => {
+  if (isLoggedin()) localStorage.removeItem("token");
+};
 
 export const getApiUrl = () => "https://privilege-api.azurewebsites.net";
-export const getApiUrl2 = () => "https://86q8wrw5v7.execute-api.us-east-2.amazonaws.com";
-
-
-
+export const getApiUrl2 = () =>
+  "https://86q8wrw5v7.execute-api.us-east-2.amazonaws.com";
 
 /* tslint:disable */
 /* eslint-disable */
@@ -55,1248 +57,1470 @@ export const getApiUrl2 = () => "https://86q8wrw5v7.execute-api.us-east-2.amazon
 // ReSharper disable InconsistentNaming
 
 export class ApplicationUserApi {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+  private http: {
+    fetch(url: RequestInfo, init?: RequestInit): Promise<Response>;
+  };
+  private baseUrl: string;
+  protected jsonParseReviver:
+    | ((key: string, value: any) => any)
+    | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : <any>window;
-        this.baseUrl = baseUrl ? baseUrl : "";
+  constructor(
+    baseUrl?: string,
+    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
+  ) {
+    this.http = http ? http : <any>window;
+    this.baseUrl = baseUrl ? baseUrl : "";
+  }
+
+  /**
+   * @return Success
+   */
+  userProfile(): Promise<UserDto> {
+    let url_ = this.baseUrl + "/api/ApplicationUser/UserProfile";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ = <RequestInit>{
+      method: "GET",
+      headers: {
+        Accept: "text/plain",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processUserProfile(_response);
+    });
+  }
+
+  protected processUserProfile(response: Response): Promise<UserDto> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @return Success
-     */
-    userProfile(): Promise<UserDto> {
-        let url_ = this.baseUrl + "/api/ApplicationUser/UserProfile";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processUserProfile(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        result200 = UserDto.fromJS(resultData200);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<UserDto>(<any>null);
+  }
 
-    protected processUserProfile(response: Response): Promise<UserDto> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = UserDto.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<UserDto>(<any>null);
+  /**
+   * @param body (optional)
+   * @return Success
+   */
+  login(body: LoginDto | undefined): Promise<string> {
+    let url_ = this.baseUrl + "/api/ApplicationUser/Login";
+    url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = JSON.stringify(body);
+
+    let options_ = <RequestInit>{
+      body: content_,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json-patch+json",
+        Accept: "text/plain",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processLogin(_response);
+    });
+  }
+
+  protected processLogin(response: Response): Promise<string> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    login(body: LoginDto | undefined): Promise<string> {
-        let url_ = this.baseUrl + "/api/ApplicationUser/Login";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processLogin(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        result200 = resultData200 !== undefined ? resultData200 : <any>null;
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<string>(<any>null);
+  }
 
-    protected processLogin(response: Response): Promise<string> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<string>(<any>null);
+  /**
+   * @param body (optional)
+   * @return Success
+   */
+  register(body: ApplicationUserDto | undefined): Promise<void> {
+    let url_ = this.baseUrl + "/api/ApplicationUser/Register";
+    url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = JSON.stringify(body);
+
+    let options_ = <RequestInit>{
+      body: content_,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json-patch+json",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processRegister(_response);
+    });
+  }
+
+  protected processRegister(response: Response): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-
-/**
-     * @param body (optional) 
-     * @return Success
-     */
-    probality(body: any): Promise<string> {
-        let url_ = "/prod";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "2,2020-10-10 09:39:26.000156,52,5,2,0,1,1,1,1,1,25281.0,28724.0,12692.0,0.215748682,0.952505649,0.7738,256.7148682,18486.0,15102.0,5226.0,2224.0,1724.0,1063.0,648.0,F,False,CBC35BF6-031F-401F-934A-733F00172EAF,None,1000";
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "text/csv"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processProbality(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
-
-    protected processProbality(response: Response): Promise<string> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<string>(<any>null);
-    }
-
-
-
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    register(body: ApplicationUserDto | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/ApplicationUser/Register";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json-patch+json",
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processRegister(_response);
-        });
-    }
-
-    protected processRegister(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(<any>null);
-    }
+    return Promise.resolve<void>(<any>null);
+  }
 }
 
 export class BorrowerProjectApi {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+  private http: {
+    fetch(url: RequestInfo, init?: RequestInit): Promise<Response>;
+  };
+  private baseUrl: string;
+  protected jsonParseReviver:
+    | ((key: string, value: any) => any)
+    | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : <any>window;
-        this.baseUrl = baseUrl ? baseUrl : "";
+  constructor(
+    baseUrl?: string,
+    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
+  ) {
+    this.http = http ? http : <any>window;
+    this.baseUrl = baseUrl ? baseUrl : "";
+  }
+
+  /**
+   * @param body (optional)
+   * @return Success
+   */
+  create(body: ProjectDto | undefined): Promise<number> {
+    let url_ = this.baseUrl + "/api/BorrowerProject/Create";
+    url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = JSON.stringify(body);
+
+    let options_ = <RequestInit>{
+      body: content_,
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json-patch+json",
+        Accept: "text/plain",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCreate(_response);
+    });
+  }
+
+  protected processCreate(response: Response): Promise<number> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    create(body: ProjectDto | undefined): Promise<number> {
-        let url_ = this.baseUrl + "/api/BorrowerProject/Create";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processCreate(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        result200 = resultData200 !== undefined ? resultData200 : <any>null;
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<number>(<any>null);
+  }
 
-    protected processCreate(response: Response): Promise<number> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
+  /**
+   * @param body (optional)
+   * @return Success
+   */
+  update(body: ProjectDto | undefined): Promise<void> {
+    let url_ = this.baseUrl + "/api/BorrowerProject/Update";
+    url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = JSON.stringify(body);
+
+    let options_ = <RequestInit>{
+      body: content_,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json-patch+json",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processUpdate(_response);
+    });
+  }
+
+  protected processUpdate(response: Response): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
+    }
+    return Promise.resolve<void>(<any>null);
+  }
+
+  /**
+   * @return Success
+   */
+  listByUserAll(): Promise<ProjectDto[]> {
+    let url_ = this.baseUrl + "/api/BorrowerProject/ListByUser";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ = <RequestInit>{
+      method: "GET",
+      headers: {
+        Accept: "text/plain",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processListByUserAll(_response);
+    });
+  }
+
+  protected processListByUserAll(response: Response): Promise<ProjectDto[]> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any;
+          for (let item of resultData200)
+            result200!.push(ProjectDto.fromJS(item));
         }
-        return Promise.resolve<number>(<any>null);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    update(body: ProjectDto | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/BorrowerProject/Update";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json-patch+json",
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processUpdate(_response);
-        });
-    }
-
-    protected processUpdate(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    listByUserAll(): Promise<ProjectDto[]> {
-        let url_ = this.baseUrl + "/api/BorrowerProject/ListByUser";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processListByUserAll(_response);
-        });
-    }
-
-    protected processListByUserAll(response: Response): Promise<ProjectDto[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ProjectDto.fromJS(item));
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<ProjectDto[]>(<any>null);
-    }
+    return Promise.resolve<ProjectDto[]>(<any>null);
+  }
 }
 
 export class ContractApi {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+  private http: {
+    fetch(url: RequestInfo, init?: RequestInit): Promise<Response>;
+  };
+  private baseUrl: string;
+  protected jsonParseReviver:
+    | ((key: string, value: any) => any)
+    | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : <any>window;
-        this.baseUrl = baseUrl ? baseUrl : "";
+  constructor(
+    baseUrl?: string,
+    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
+  ) {
+    this.http = http ? http : <any>window;
+    this.baseUrl = baseUrl ? baseUrl : "";
+  }
+
+  /**
+   * @return Success
+   */
+  getByIds(
+    borrowerProjectId: number,
+    lenderProjectId: number
+  ): Promise<ContractDto[]> {
+    let url_ =
+      this.baseUrl +
+      "/api/Contract/GetByIds/{borrowerProjectId}/{lenderProjectId}";
+    if (borrowerProjectId === undefined || borrowerProjectId === null)
+      throw new Error("The parameter 'borrowerProjectId' must be defined.");
+    url_ = url_.replace(
+      "{borrowerProjectId}",
+      encodeURIComponent("" + borrowerProjectId)
+    );
+    if (lenderProjectId === undefined || lenderProjectId === null)
+      throw new Error("The parameter 'lenderProjectId' must be defined.");
+    url_ = url_.replace(
+      "{lenderProjectId}",
+      encodeURIComponent("" + lenderProjectId)
+    );
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ = <RequestInit>{
+      method: "GET",
+      headers: {
+        Accept: "text/plain",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processGetByIds(_response);
+    });
+  }
+
+  protected processGetByIds(response: Response): Promise<ContractDto[]> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @return Success
-     */
-    getByIds(borrowerProjectId: number, lenderProjectId: number): Promise<ContractDto[]> {
-        let url_ = this.baseUrl + "/api/Contract/GetByIds/{borrowerProjectId}/{lenderProjectId}";
-        if (borrowerProjectId === undefined || borrowerProjectId === null)
-            throw new Error("The parameter 'borrowerProjectId' must be defined.");
-        url_ = url_.replace("{borrowerProjectId}", encodeURIComponent("" + borrowerProjectId));
-        if (lenderProjectId === undefined || lenderProjectId === null)
-            throw new Error("The parameter 'lenderProjectId' must be defined.");
-        url_ = url_.replace("{lenderProjectId}", encodeURIComponent("" + lenderProjectId));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetByIds(_response);
-        });
-    }
-
-    protected processGetByIds(response: Response): Promise<ContractDto[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ContractDto.fromJS(item));
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any;
+          for (let item of resultData200)
+            result200!.push(ContractDto.fromJS(item));
         }
-        return Promise.resolve<ContractDto[]>(<any>null);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<ContractDto[]>(<any>null);
+  }
 
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    create2(body: ContractDto | undefined): Promise<number> {
-        let url_ = this.baseUrl + "/api/Contract/Create";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * @param body (optional)
+   * @return Success
+   */
+  create2(body: ContractDto | undefined): Promise<number> {
+    let url_ = this.baseUrl + "/api/Contract/Create";
+    url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
+    const content_ = JSON.stringify(body);
 
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
-            }
-        };
+    let options_ = <RequestInit>{
+      body: content_,
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json-patch+json",
+        Accept: "text/plain",
+      },
+    };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processCreate2(_response);
-        });
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCreate2(_response);
+    });
+  }
+
+  protected processCreate2(response: Response): Promise<number> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        result200 = resultData200 !== undefined ? resultData200 : <any>null;
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
+    }
+    return Promise.resolve<number>(<any>null);
+  }
 
-    protected processCreate2(response: Response): Promise<number> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
+  /**
+   * @param body (optional)
+   * @return Success
+   */
+  update2(body: ContractDto | undefined): Promise<void> {
+    let url_ = this.baseUrl + "/api/Contract/Update";
+    url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = JSON.stringify(body);
+
+    let options_ = <RequestInit>{
+      body: content_,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json-patch+json",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processUpdate2(_response);
+    });
+  }
+
+  protected processUpdate2(response: Response): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
+    }
+    return Promise.resolve<void>(<any>null);
+  }
+
+  /**
+   * @return Success
+   */
+  delete(id: number): Promise<void> {
+    let url_ = this.baseUrl + "/api/Contract/Delete/{id}";
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.");
+    url_ = url_.replace("{id}", encodeURIComponent("" + id));
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ = <RequestInit>{
+      method: "DELETE",
+      headers: {},
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processDelete(_response);
+    });
+  }
+
+  protected processDelete(response: Response): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
+    }
+    return Promise.resolve<void>(<any>null);
+  }
+
+  /**
+   * @return Success
+   */
+  userSituation(): Promise<UserBorrowLendSituationDto> {
+    let url_ = this.baseUrl + "/api/Contract/UserSituation";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ = <RequestInit>{
+      method: "GET",
+      headers: {
+        Accept: "text/plain",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processUserSituation(_response);
+    });
+  }
+
+  protected processUserSituation(
+    response: Response
+  ): Promise<UserBorrowLendSituationDto> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        result200 = UserBorrowLendSituationDto.fromJS(resultData200);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
+    }
+    return Promise.resolve<UserBorrowLendSituationDto>(<any>null);
+  }
+
+  /**
+   * @return Success
+   */
+  listByUserIdAll(): Promise<ContractDto[]> {
+    let url_ = this.baseUrl + "/api/Contract/ListByUserId";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ = <RequestInit>{
+      method: "GET",
+      headers: {
+        Accept: "text/plain",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processListByUserIdAll(_response);
+    });
+  }
+
+  protected processListByUserIdAll(response: Response): Promise<ContractDto[]> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any;
+          for (let item of resultData200)
+            result200!.push(ContractDto.fromJS(item));
         }
-        return Promise.resolve<number>(<any>null);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    update2(body: ContractDto | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Contract/Update";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json-patch+json",
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processUpdate2(_response);
-        });
-    }
-
-    protected processUpdate2(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    delete(id: number): Promise<void> {
-        let url_ = this.baseUrl + "/api/Contract/Delete/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "DELETE",
-            headers: {
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processDelete(_response);
-        });
-    }
-
-    protected processDelete(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    userSituation(): Promise<UserBorrowLendSituationDto> {
-        let url_ = this.baseUrl + "/api/Contract/UserSituation";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processUserSituation(_response);
-        });
-    }
-
-    protected processUserSituation(response: Response): Promise<UserBorrowLendSituationDto> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = UserBorrowLendSituationDto.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<UserBorrowLendSituationDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    listByUserIdAll(): Promise<ContractDto[]> {
-        let url_ = this.baseUrl + "/api/Contract/ListByUserId";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processListByUserIdAll(_response);
-        });
-    }
-
-    protected processListByUserIdAll(response: Response): Promise<ContractDto[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ContractDto.fromJS(item));
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<ContractDto[]>(<any>null);
-    }
+    return Promise.resolve<ContractDto[]>(<any>null);
+  }
 }
 
 export class LenderProjectApi {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+  private http: {
+    fetch(url: RequestInfo, init?: RequestInit): Promise<Response>;
+  };
+  private baseUrl: string;
+  protected jsonParseReviver:
+    | ((key: string, value: any) => any)
+    | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : <any>window;
-        this.baseUrl = baseUrl ? baseUrl : "";
+  constructor(
+    baseUrl?: string,
+    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
+  ) {
+    this.http = http ? http : <any>window;
+    this.baseUrl = baseUrl ? baseUrl : "";
+  }
+
+  /**
+   * @param body (optional)
+   * @return Success
+   */
+  create3(body: ProjectDto | undefined): Promise<number> {
+    let url_ = this.baseUrl + "/api/LenderProject/Create";
+    url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = JSON.stringify(body);
+
+    let options_ = <RequestInit>{
+      body: content_,
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json-patch+json",
+        Accept: "text/plain",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCreate3(_response);
+    });
+  }
+
+  protected processCreate3(response: Response): Promise<number> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    create3(body: ProjectDto | undefined): Promise<number> {
-        let url_ = this.baseUrl + "/api/LenderProject/Create";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processCreate3(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        result200 = resultData200 !== undefined ? resultData200 : <any>null;
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<number>(<any>null);
+  }
 
-    protected processCreate3(response: Response): Promise<number> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
+  /**
+   * @param body (optional)
+   * @return Success
+   */
+  update3(body: ProjectDto | undefined): Promise<void> {
+    let url_ = this.baseUrl + "/api/LenderProject/Update";
+    url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = JSON.stringify(body);
+
+    let options_ = <RequestInit>{
+      body: content_,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json-patch+json",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processUpdate3(_response);
+    });
+  }
+
+  protected processUpdate3(response: Response): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
+    }
+    return Promise.resolve<void>(<any>null);
+  }
+
+  /**
+   * @return Success
+   */
+  listByUser(): Promise<ProjectDto[]> {
+    let url_ = this.baseUrl + "/api/LenderProject/ListByUser";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ = <RequestInit>{
+      method: "GET",
+      headers: {
+        Accept: "text/plain",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processListByUser(_response);
+    });
+  }
+
+  protected processListByUser(response: Response): Promise<ProjectDto[]> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any;
+          for (let item of resultData200)
+            result200!.push(ProjectDto.fromJS(item));
         }
-        return Promise.resolve<number>(<any>null);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    update3(body: ProjectDto | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/LenderProject/Update";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json-patch+json",
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processUpdate3(_response);
-        });
-    }
-
-    protected processUpdate3(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    listByUser(): Promise<ProjectDto[]> {
-        let url_ = this.baseUrl + "/api/LenderProject/ListByUser";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processListByUser(_response);
-        });
-    }
-
-    protected processListByUser(response: Response): Promise<ProjectDto[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ProjectDto.fromJS(item));
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<ProjectDto[]>(<any>null);
-    }
+    return Promise.resolve<ProjectDto[]>(<any>null);
+  }
 }
 
 export class UserInterestApi {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+  private http: {
+    fetch(url: RequestInfo, init?: RequestInit): Promise<Response>;
+  };
+  private baseUrl: string;
+  protected jsonParseReviver:
+    | ((key: string, value: any) => any)
+    | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : <any>window;
-        this.baseUrl = baseUrl ? baseUrl : "";
+  constructor(
+    baseUrl?: string,
+    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
+  ) {
+    this.http = http ? http : <any>window;
+    this.baseUrl = baseUrl ? baseUrl : "";
+  }
+
+  /**
+   * @return Success
+   */
+  listByUserId(): Promise<string[]> {
+    let url_ = this.baseUrl + "/ListByUserId";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ = <RequestInit>{
+      method: "GET",
+      headers: {
+        Accept: "text/plain",
+      },
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processListByUserId(_response);
+    });
+  }
+
+  protected processListByUserId(response: Response): Promise<string[]> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @return Success
-     */
-    listByUserId(): Promise<string[]> {
-        let url_ = this.baseUrl + "/ListByUserId";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processListByUserId(_response);
-        });
-    }
-
-    protected processListByUserId(response: Response): Promise<string[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(item);
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any;
+          for (let item of resultData200) result200!.push(item);
         }
-        return Promise.resolve<string[]>(<any>null);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<string[]>(<any>null);
+  }
 
-    /**
-     * @return Success
-     */
-    listInterestingProjectsByUserId(): Promise<ProjectDto[]> {
-        let url_ = this.baseUrl + "/ListInterestingProjectsByUserId";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * @return Success
+   */
+  listInterestingProjectsByUserId(): Promise<ProjectDto[]> {
+    let url_ = this.baseUrl + "/ListInterestingProjectsByUserId";
+    url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
+    let options_ = <RequestInit>{
+      method: "GET",
+      headers: {
+        Accept: "text/plain",
+      },
+    };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processListInterestingProjectsByUserId(_response);
-        });
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processListInterestingProjectsByUserId(_response);
+    });
+  }
+
+  protected processListInterestingProjectsByUserId(
+    response: Response
+  ): Promise<ProjectDto[]> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    protected processListInterestingProjectsByUserId(response: Response): Promise<ProjectDto[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ProjectDto.fromJS(item));
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any;
+          for (let item of resultData200)
+            result200!.push(ProjectDto.fromJS(item));
         }
-        return Promise.resolve<ProjectDto[]>(<any>null);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<ProjectDto[]>(<any>null);
+  }
 
-    /**
-     * @return Success
-     */
-    listInterestingPeopleByUserId(): Promise<UserDto[]> {
-        let url_ = this.baseUrl + "/ListInterestingPeopleByUserId";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * @return Success
+   */
+  listInterestingPeopleByUserId(): Promise<UserDto[]> {
+    let url_ = this.baseUrl + "/ListInterestingPeopleByUserId";
+    url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
+    let options_ = <RequestInit>{
+      method: "GET",
+      headers: {
+        Accept: "text/plain",
+      },
+    };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processListInterestingPeopleByUserId(_response);
-        });
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processListInterestingPeopleByUserId(_response);
+    });
+  }
+
+  protected processListInterestingPeopleByUserId(
+    response: Response
+  ): Promise<UserDto[]> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    protected processListInterestingPeopleByUserId(response: Response): Promise<UserDto[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(UserDto.fromJS(item));
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        let resultData200 =
+          _responseText === ""
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver);
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any;
+          for (let item of resultData200) result200!.push(UserDto.fromJS(item));
         }
-        return Promise.resolve<UserDto[]>(<any>null);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<UserDto[]>(<any>null);
+  }
 }
 
 export class UserDto implements IUserDto {
-    id?: string | undefined;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    interests?: string[] | undefined;
-    creditScore?: number;
-    apy?: number;
+  id?: string | undefined;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  interests?: string[] | undefined;
+  creditScore?: number;
+  apy?: number;
 
-    constructor(data?: IUserDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
+  constructor(data?: IUserDto) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property];
+      }
     }
+  }
 
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.firstName = _data["firstName"];
-            this.lastName = _data["lastName"];
-            if (Array.isArray(_data["interests"])) {
-                this.interests = [] as any;
-                for (let item of _data["interests"])
-                    this.interests!.push(item);
-            }
-            this.creditScore = _data["creditScore"];
-            this.apy = _data["apy"];
-        }
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data["id"];
+      this.firstName = _data["firstName"];
+      this.lastName = _data["lastName"];
+      if (Array.isArray(_data["interests"])) {
+        this.interests = [] as any;
+        for (let item of _data["interests"]) this.interests!.push(item);
+      }
+      this.creditScore = _data["creditScore"];
+      this.apy = _data["apy"];
     }
+  }
 
-    static fromJS(data: any): UserDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new UserDto();
-        result.init(data);
-        return result;
-    }
+  static fromJS(data: any): UserDto {
+    data = typeof data === "object" ? data : {};
+    let result = new UserDto();
+    result.init(data);
+    return result;
+  }
 
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        if (Array.isArray(this.interests)) {
-            data["interests"] = [];
-            for (let item of this.interests)
-                data["interests"].push(item);
-        }
-        data["creditScore"] = this.creditScore;
-        data["apy"] = this.apy;
-        return data; 
+  toJSON(data?: any) {
+    data = typeof data === "object" ? data : {};
+    data["id"] = this.id;
+    data["firstName"] = this.firstName;
+    data["lastName"] = this.lastName;
+    if (Array.isArray(this.interests)) {
+      data["interests"] = [];
+      for (let item of this.interests) data["interests"].push(item);
     }
+    data["creditScore"] = this.creditScore;
+    data["apy"] = this.apy;
+    return data;
+  }
 }
 
 export interface IUserDto {
-    id?: string | undefined;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    interests?: string[] | undefined;
-    creditScore?: number;
-    apy?: number;
+  id?: string | undefined;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  interests?: string[] | undefined;
+  creditScore?: number;
+  apy?: number;
 }
 
 export class LoginDto implements ILoginDto {
-    password?: string | undefined;
-    username?: string | undefined;
+  password?: string | undefined;
+  username?: string | undefined;
 
-    constructor(data?: ILoginDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
+  constructor(data?: ILoginDto) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property];
+      }
     }
+  }
 
-    init(_data?: any) {
-        if (_data) {
-            this.password = _data["password"];
-            this.username = _data["username"];
-        }
+  init(_data?: any) {
+    if (_data) {
+      this.password = _data["password"];
+      this.username = _data["username"];
     }
+  }
 
-    static fromJS(data: any): LoginDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new LoginDto();
-        result.init(data);
-        return result;
-    }
+  static fromJS(data: any): LoginDto {
+    data = typeof data === "object" ? data : {};
+    let result = new LoginDto();
+    result.init(data);
+    return result;
+  }
 
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["password"] = this.password;
-        data["username"] = this.username;
-        return data; 
-    }
+  toJSON(data?: any) {
+    data = typeof data === "object" ? data : {};
+    data["password"] = this.password;
+    data["username"] = this.username;
+    return data;
+  }
 }
 
 export interface ILoginDto {
-    password?: string | undefined;
-    username?: string | undefined;
+  password?: string | undefined;
+  username?: string | undefined;
 }
 
 export class ApplicationUserDto implements IApplicationUserDto {
-    userName?: string | undefined;
-    email?: string | undefined;
-    password?: string | undefined;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    dateOfBirth?: Date;
+  userName?: string | undefined;
+  email?: string | undefined;
+  password?: string | undefined;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  dateOfBirth?: Date;
 
-    constructor(data?: IApplicationUserDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
+  constructor(data?: IApplicationUserDto) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property];
+      }
     }
+  }
 
-    init(_data?: any) {
-        if (_data) {
-            this.userName = _data["userName"];
-            this.email = _data["email"];
-            this.password = _data["password"];
-            this.firstName = _data["firstName"];
-            this.lastName = _data["lastName"];
-            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
-        }
+  init(_data?: any) {
+    if (_data) {
+      this.userName = _data["userName"];
+      this.email = _data["email"];
+      this.password = _data["password"];
+      this.firstName = _data["firstName"];
+      this.lastName = _data["lastName"];
+      this.dateOfBirth = _data["dateOfBirth"]
+        ? new Date(_data["dateOfBirth"].toString())
+        : <any>undefined;
     }
+  }
 
-    static fromJS(data: any): ApplicationUserDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ApplicationUserDto();
-        result.init(data);
-        return result;
-    }
+  static fromJS(data: any): ApplicationUserDto {
+    data = typeof data === "object" ? data : {};
+    let result = new ApplicationUserDto();
+    result.init(data);
+    return result;
+  }
 
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userName"] = this.userName;
-        data["email"] = this.email;
-        data["password"] = this.password;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
-        return data; 
-    }
+  toJSON(data?: any) {
+    data = typeof data === "object" ? data : {};
+    data["userName"] = this.userName;
+    data["email"] = this.email;
+    data["password"] = this.password;
+    data["firstName"] = this.firstName;
+    data["lastName"] = this.lastName;
+    data["dateOfBirth"] = this.dateOfBirth
+      ? this.dateOfBirth.toISOString()
+      : <any>undefined;
+    return data;
+  }
 }
 
 export interface IApplicationUserDto {
-    userName?: string | undefined;
-    email?: string | undefined;
-    password?: string | undefined;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    dateOfBirth?: Date;
+  userName?: string | undefined;
+  email?: string | undefined;
+  password?: string | undefined;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  dateOfBirth?: Date;
 }
 
 export enum ProjectType {
-    _0 = 0,
-    _1 = 1,
+  _0 = 0,
+  _1 = 1,
 }
 
 export class ProjectDto implements IProjectDto {
-    budget?: number;
-    createdByUserId?: string | undefined;
-    creationDate?: Date;
-    description?: string | undefined;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    id?: number;
-    title?: string | undefined;
-    imageUrl?: string | undefined;
-    projectType?: ProjectType;
-    interestRate?: number;
-    isInterestRateFlexible?: boolean;
+  budget?: number;
+  createdByUserId?: string | undefined;
+  creationDate?: Date;
+  description?: string | undefined;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  id?: number;
+  title?: string | undefined;
+  imageUrl?: string | undefined;
+  projectType?: ProjectType;
+  interestRate?: number;
+  isInterestRateFlexible?: boolean;
+  creditScore?: number;
+  apy?: number;
 
-    constructor(data?: IProjectDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
+  constructor(data?: IProjectDto) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property];
+      }
     }
+  }
 
-    init(_data?: any) {
-        if (_data) {
-            this.budget = _data["budget"];
-            this.createdByUserId = _data["createdByUserId"];
-            this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
-            this.description = _data["description"];
-            this.firstName = _data["firstName"];
-            this.lastName = _data["lastName"];
-            this.id = _data["id"];
-            this.title = _data["title"];
-            this.imageUrl = _data["imageUrl"];
-            this.projectType = _data["projectType"];
-            this.interestRate = _data["interestRate"];
-            this.isInterestRateFlexible = _data["isInterestRateFlexible"];
-        }
+  init(_data?: any) {
+    if (_data) {
+      this.budget = _data["budget"];
+      this.createdByUserId = _data["createdByUserId"];
+      this.creationDate = _data["creationDate"]
+        ? new Date(_data["creationDate"].toString())
+        : <any>undefined;
+      this.description = _data["description"];
+      this.firstName = _data["firstName"];
+      this.lastName = _data["lastName"];
+      this.id = _data["id"];
+      this.title = _data["title"];
+      this.imageUrl = _data["imageUrl"];
+      this.projectType = _data["projectType"];
+      this.interestRate = _data["interestRate"];
+      this.isInterestRateFlexible = _data["isInterestRateFlexible"];
+      this.creditScore = _data["creditScore"];
+      this.apy = _data["apy"];
     }
+  }
 
-    static fromJS(data: any): ProjectDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProjectDto();
-        result.init(data);
-        return result;
-    }
+  static fromJS(data: any): ProjectDto {
+    data = typeof data === "object" ? data : {};
+    let result = new ProjectDto();
+    result.init(data);
+    return result;
+  }
 
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["budget"] = this.budget;
-        data["createdByUserId"] = this.createdByUserId;
-        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
-        data["description"] = this.description;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["id"] = this.id;
-        data["title"] = this.title;
-        data["imageUrl"] = this.imageUrl;
-        data["projectType"] = this.projectType;
-        data["interestRate"] = this.interestRate;
-        data["isInterestRateFlexible"] = this.isInterestRateFlexible;
-        return data; 
-    }
+  toJSON(data?: any) {
+    data = typeof data === "object" ? data : {};
+    data["budget"] = this.budget;
+    data["createdByUserId"] = this.createdByUserId;
+    data["creationDate"] = this.creationDate
+      ? this.creationDate.toISOString()
+      : <any>undefined;
+    data["description"] = this.description;
+    data["firstName"] = this.firstName;
+    data["lastName"] = this.lastName;
+    data["id"] = this.id;
+    data["title"] = this.title;
+    data["imageUrl"] = this.imageUrl;
+    data["projectType"] = this.projectType;
+    data["interestRate"] = this.interestRate;
+    data["isInterestRateFlexible"] = this.isInterestRateFlexible;
+    data["creditScore"] = this.creditScore;
+    data["apy"] = this.apy;
+    return data;
+  }
 }
 
 export interface IProjectDto {
-    budget?: number;
-    createdByUserId?: string | undefined;
-    creationDate?: Date;
-    description?: string | undefined;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    id?: number;
-    title?: string | undefined;
-    imageUrl?: string | undefined;
-    projectType?: ProjectType;
-    interestRate?: number;
-    isInterestRateFlexible?: boolean;
+  budget?: number;
+  createdByUserId?: string | undefined;
+  creationDate?: Date;
+  description?: string | undefined;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  id?: number;
+  title?: string | undefined;
+  imageUrl?: string | undefined;
+  projectType?: ProjectType;
+  interestRate?: number;
+  isInterestRateFlexible?: boolean;
+  creditScore?: number;
+  apy?: number;
 }
 
 export class ContractDto implements IContractDto {
-    id?: number;
-    borrowerProjectId?: number;
-    contractStatusId?: number;
-    lenderProjectId?: number;
-    expiration?: Date;
-    creationDate?: Date;
-    clause?: string | undefined;
-    amount?: number;
-    interestRate?: number;
-    projectOwnerFirstName?: string | undefined;
-    projectOwnerLastName?: string | undefined;
-    dealerFirstName?: string | undefined;
-    dealerLastName?: string | undefined;
-    projectTitle?: string | undefined;
+  id?: number;
+  borrowerProjectId?: number;
+  contractStatusId?: number;
+  lenderProjectId?: number;
+  expiration?: Date;
+  creationDate?: Date;
+  clause?: string | undefined;
+  amount?: number;
+  interestRate?: number;
+  projectOwnerFirstName?: string | undefined;
+  projectOwnerLastName?: string | undefined;
+  dealerFirstName?: string | undefined;
+  dealerLastName?: string | undefined;
+  projectTitle?: string | undefined;
 
-    constructor(data?: IContractDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
+  constructor(data?: IContractDto) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property];
+      }
     }
+  }
 
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.borrowerProjectId = _data["borrowerProjectId"];
-            this.contractStatusId = _data["contractStatusId"];
-            this.lenderProjectId = _data["lenderProjectId"];
-            this.expiration = _data["expiration"] ? new Date(_data["expiration"].toString()) : <any>undefined;
-            this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
-            this.clause = _data["clause"];
-            this.amount = _data["amount"];
-            this.interestRate = _data["interestRate"];
-            this.projectOwnerFirstName = _data["projectOwnerFirstName"];
-            this.projectOwnerLastName = _data["projectOwnerLastName"];
-            this.dealerFirstName = _data["dealerFirstName"];
-            this.dealerLastName = _data["dealerLastName"];
-            this.projectTitle = _data["projectTitle"];
-        }
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data["id"];
+      this.borrowerProjectId = _data["borrowerProjectId"];
+      this.contractStatusId = _data["contractStatusId"];
+      this.lenderProjectId = _data["lenderProjectId"];
+      this.expiration = _data["expiration"]
+        ? new Date(_data["expiration"].toString())
+        : <any>undefined;
+      this.creationDate = _data["creationDate"]
+        ? new Date(_data["creationDate"].toString())
+        : <any>undefined;
+      this.clause = _data["clause"];
+      this.amount = _data["amount"];
+      this.interestRate = _data["interestRate"];
+      this.projectOwnerFirstName = _data["projectOwnerFirstName"];
+      this.projectOwnerLastName = _data["projectOwnerLastName"];
+      this.dealerFirstName = _data["dealerFirstName"];
+      this.dealerLastName = _data["dealerLastName"];
+      this.projectTitle = _data["projectTitle"];
     }
+  }
 
-    static fromJS(data: any): ContractDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContractDto();
-        result.init(data);
-        return result;
-    }
+  static fromJS(data: any): ContractDto {
+    data = typeof data === "object" ? data : {};
+    let result = new ContractDto();
+    result.init(data);
+    return result;
+  }
 
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["borrowerProjectId"] = this.borrowerProjectId;
-        data["contractStatusId"] = this.contractStatusId;
-        data["lenderProjectId"] = this.lenderProjectId;
-        data["expiration"] = this.expiration ? this.expiration.toISOString() : <any>undefined;
-        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
-        data["clause"] = this.clause;
-        data["amount"] = this.amount;
-        data["interestRate"] = this.interestRate;
-        data["projectOwnerFirstName"] = this.projectOwnerFirstName;
-        data["projectOwnerLastName"] = this.projectOwnerLastName;
-        data["dealerFirstName"] = this.dealerFirstName;
-        data["dealerLastName"] = this.dealerLastName;
-        data["projectTitle"] = this.projectTitle;
-        return data; 
-    }
+  toJSON(data?: any) {
+    data = typeof data === "object" ? data : {};
+    data["id"] = this.id;
+    data["borrowerProjectId"] = this.borrowerProjectId;
+    data["contractStatusId"] = this.contractStatusId;
+    data["lenderProjectId"] = this.lenderProjectId;
+    data["expiration"] = this.expiration
+      ? this.expiration.toISOString()
+      : <any>undefined;
+    data["creationDate"] = this.creationDate
+      ? this.creationDate.toISOString()
+      : <any>undefined;
+    data["clause"] = this.clause;
+    data["amount"] = this.amount;
+    data["interestRate"] = this.interestRate;
+    data["projectOwnerFirstName"] = this.projectOwnerFirstName;
+    data["projectOwnerLastName"] = this.projectOwnerLastName;
+    data["dealerFirstName"] = this.dealerFirstName;
+    data["dealerLastName"] = this.dealerLastName;
+    data["projectTitle"] = this.projectTitle;
+    return data;
+  }
 }
 
 export interface IContractDto {
-    id?: number;
-    borrowerProjectId?: number;
-    contractStatusId?: number;
-    lenderProjectId?: number;
-    expiration?: Date;
-    creationDate?: Date;
-    clause?: string | undefined;
-    amount?: number;
-    interestRate?: number;
-    projectOwnerFirstName?: string | undefined;
-    projectOwnerLastName?: string | undefined;
-    dealerFirstName?: string | undefined;
-    dealerLastName?: string | undefined;
-    projectTitle?: string | undefined;
+  id?: number;
+  borrowerProjectId?: number;
+  contractStatusId?: number;
+  lenderProjectId?: number;
+  expiration?: Date;
+  creationDate?: Date;
+  clause?: string | undefined;
+  amount?: number;
+  interestRate?: number;
+  projectOwnerFirstName?: string | undefined;
+  projectOwnerLastName?: string | undefined;
+  dealerFirstName?: string | undefined;
+  dealerLastName?: string | undefined;
+  projectTitle?: string | undefined;
 }
 
 export class UserBorrowLendSituationDto implements IUserBorrowLendSituationDto {
-    totalBorrowingAmount?: number;
-    totalBorrowingWithInterestRate?: number;
-    readonly borrowLossProfit?: number;
-    totalLendingAmount?: number;
-    totalLendingWithInterestRate?: number;
-    readonly lendLossProfit?: number;
-    readonly totalLossProfit?: number;
+  totalBorrowingAmount?: number;
+  totalBorrowingWithInterestRate?: number;
+  readonly borrowLossProfit?: number;
+  totalLendingAmount?: number;
+  totalLendingWithInterestRate?: number;
+  readonly lendLossProfit?: number;
+  readonly totalLossProfit?: number;
 
-    constructor(data?: IUserBorrowLendSituationDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
+  constructor(data?: IUserBorrowLendSituationDto) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property];
+      }
     }
+  }
 
-    init(_data?: any) {
-        if (_data) {
-            this.totalBorrowingAmount = _data["totalBorrowingAmount"];
-            this.totalBorrowingWithInterestRate = _data["totalBorrowingWithInterestRate"];
-            (<any>this).borrowLossProfit = _data["borrowLossProfit"];
-            this.totalLendingAmount = _data["totalLendingAmount"];
-            this.totalLendingWithInterestRate = _data["totalLendingWithInterestRate"];
-            (<any>this).lendLossProfit = _data["lendLossProfit"];
-            (<any>this).totalLossProfit = _data["totalLossProfit"];
-        }
+  init(_data?: any) {
+    if (_data) {
+      this.totalBorrowingAmount = _data["totalBorrowingAmount"];
+      this.totalBorrowingWithInterestRate =
+        _data["totalBorrowingWithInterestRate"];
+      (<any>this).borrowLossProfit = _data["borrowLossProfit"];
+      this.totalLendingAmount = _data["totalLendingAmount"];
+      this.totalLendingWithInterestRate = _data["totalLendingWithInterestRate"];
+      (<any>this).lendLossProfit = _data["lendLossProfit"];
+      (<any>this).totalLossProfit = _data["totalLossProfit"];
     }
+  }
 
-    static fromJS(data: any): UserBorrowLendSituationDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new UserBorrowLendSituationDto();
-        result.init(data);
-        return result;
-    }
+  static fromJS(data: any): UserBorrowLendSituationDto {
+    data = typeof data === "object" ? data : {};
+    let result = new UserBorrowLendSituationDto();
+    result.init(data);
+    return result;
+  }
 
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["totalBorrowingAmount"] = this.totalBorrowingAmount;
-        data["totalBorrowingWithInterestRate"] = this.totalBorrowingWithInterestRate;
-        data["borrowLossProfit"] = this.borrowLossProfit;
-        data["totalLendingAmount"] = this.totalLendingAmount;
-        data["totalLendingWithInterestRate"] = this.totalLendingWithInterestRate;
-        data["lendLossProfit"] = this.lendLossProfit;
-        data["totalLossProfit"] = this.totalLossProfit;
-        return data; 
-    }
+  toJSON(data?: any) {
+    data = typeof data === "object" ? data : {};
+    data["totalBorrowingAmount"] = this.totalBorrowingAmount;
+    data[
+      "totalBorrowingWithInterestRate"
+    ] = this.totalBorrowingWithInterestRate;
+    data["borrowLossProfit"] = this.borrowLossProfit;
+    data["totalLendingAmount"] = this.totalLendingAmount;
+    data["totalLendingWithInterestRate"] = this.totalLendingWithInterestRate;
+    data["lendLossProfit"] = this.lendLossProfit;
+    data["totalLossProfit"] = this.totalLossProfit;
+    return data;
+  }
 }
 
 export interface IUserBorrowLendSituationDto {
-    totalBorrowingAmount?: number;
-    totalBorrowingWithInterestRate?: number;
-    borrowLossProfit?: number;
-    totalLendingAmount?: number;
-    totalLendingWithInterestRate?: number;
-    lendLossProfit?: number;
-    totalLossProfit?: number;
+  totalBorrowingAmount?: number;
+  totalBorrowingWithInterestRate?: number;
+  borrowLossProfit?: number;
+  totalLendingAmount?: number;
+  totalLendingWithInterestRate?: number;
+  lendLossProfit?: number;
+  totalLossProfit?: number;
 }
 
 export class ApiException extends Error {
-    message: string;
-    status: number;
-    response: string;
-    headers: { [key: string]: any; };
-    result: any;
+  message: string;
+  status: number;
+  response: string;
+  headers: { [key: string]: any };
+  result: any;
 
-    constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
-        super();
+  constructor(
+    message: string,
+    status: number,
+    response: string,
+    headers: { [key: string]: any },
+    result: any
+  ) {
+    super();
 
-        this.message = message;
-        this.status = status;
-        this.response = response;
-        this.headers = headers;
-        this.result = result;
-    }
+    this.message = message;
+    this.status = status;
+    this.response = response;
+    this.headers = headers;
+    this.result = result;
+  }
 
-    protected isApiException = true;
+  protected isApiException = true;
 
-    static isApiException(obj: any): obj is ApiException {
-        return obj.isApiException === true;
-    }
+  static isApiException(obj: any): obj is ApiException {
+    return obj.isApiException === true;
+  }
 }
 
-function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
-    if (result !== null && result !== undefined)
-        throw result;
-    else
-        throw new ApiException(message, status, response, headers, null);
+function throwException(
+  message: string,
+  status: number,
+  response: string,
+  headers: { [key: string]: any },
+  result?: any
+): any {
+  if (result !== null && result !== undefined) throw result;
+  else throw new ApiException(message, status, response, headers, null);
 }
