@@ -88,42 +88,44 @@ const LifeTabPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonGrid>
-          <IonRow>
-            <IonCol size="5">
-              <IonLabel>Linked Accounts</IonLabel>
-            </IonCol>
-            <IonCol size="2">
-              <LinkIcon />
-            </IonCol>
-            <IonCol size="5" align-self="end">
-              <FacebookIcon />
-              <TwitterIcon />
-              <AddIcon></AddIcon>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-        {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
-        <ChartCard />
-        <div style={{ display: "flex", padding: "0 16px" }}>
-          <h5 style={{ flex: 1 }}>Borrowing capacity</h5>
-          <h5>900€</h5>
-        </div>
-        <div style={{ display: "flex", padding: "0 16px" }}>
-          <h5 style={{ flex: 1 }}>You've helped 8 People</h5>
-          <h5>500$</h5>
-        </div>
-        <div style={{ display: "flex", padding: "0 16px" }}>
-          <h5 style={{ flex: 1 }}>You owe 1 Person</h5>
-          <h5>1000$</h5>
-        </div>
-        <div style={{ display: "flex", padding: "0 16px" }}>
-          <h5 style={{ flex: 1 }}>Credit Score</h5>
-          <h5>{user?.creditScore}</h5>
-        </div>
-        <div style={{ display: "flex", padding: "0 16px" }}>
-          <h5 style={{ flex: 1 }}>APY</h5>
-          <h5>{user?.apy}</h5>
+        <div style={{ background: "#EBEBEB" }}>
+          <IonGrid>
+            <IonRow>
+              <IonCol size="5">
+                <IonLabel>Linked Accounts</IonLabel>
+              </IonCol>
+              <IonCol size="2">
+                <LinkIcon />
+              </IonCol>
+              <IonCol size="5" align-self="end">
+                <FacebookIcon />
+                <TwitterIcon />
+                <AddIcon></AddIcon>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+          {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
+          <ChartCard />
+          <div style={{ display: "flex", padding: "0 16px" }}>
+            <h5 style={{ flex: 1 }}>Borrowing capacity</h5>
+            <h5>900€</h5>
+          </div>
+          <div style={{ display: "flex", padding: "0 16px" }}>
+            <h5 style={{ flex: 1 }}>You've helped 8 People</h5>
+            <h5>500$</h5>
+          </div>
+          <div style={{ display: "flex", padding: "0 16px" }}>
+            <h5 style={{ flex: 1 }}>You owe 1 Person</h5>
+            <h5>1000$</h5>
+          </div>
+          <div style={{ display: "flex", padding: "0 16px" }}>
+            <h5 style={{ flex: 1 }}>Credit Score</h5>
+            <h5>{user?.creditScore}</h5>
+          </div>
+          <div style={{ display: "flex", padding: "0 16px" }}>
+            <h5 style={{ flex: 1 }}>APY</h5>
+            <h5>{user?.apy}</h5>
+          </div>
         </div>
       </IonContent>
     </IonPage>

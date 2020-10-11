@@ -53,26 +53,28 @@ const Match: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonCard>
-          <IonCardHeader>
-            <IonCardSubtitle></IonCardSubtitle>
-            <IonCardTitle>My interests</IonCardTitle>
-          </IonCardHeader>
+        <div style={{ background: "#EBEBEB" }}>
+          <IonCard>
+            <IonCardHeader>
+              <IonCardSubtitle></IonCardSubtitle>
+              <IonCardTitle>My interests</IonCardTitle>
+            </IonCardHeader>
 
-          <IonCardContent>
-            {interests &&
-              interests.map((i) => {
-                return (
-                  <IonChip key={i}>
-                    <IonLabel>{i}</IonLabel>
-                  </IonChip>
-                );
-              })}
-          </IonCardContent>
-        </IonCard>
+            <IonCardContent>
+              {interests &&
+                interests.map((i) => {
+                  return (
+                    <IonChip key={i}>
+                      <IonLabel>{i}</IonLabel>
+                    </IonChip>
+                  );
+                })}
+            </IonCardContent>
+          </IonCard>
 
-        {/* <ProfilesMatch /> */}
-        <ProjectsMatch />
+          {/* <ProfilesMatch /> */}
+          <ProjectsMatch />
+        </div>
       </IonContent>
     </IonPage>
   );

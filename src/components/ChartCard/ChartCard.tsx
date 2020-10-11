@@ -50,7 +50,6 @@ import { CartesianGrid, Line, LineChart } from "recharts";
   
         <IonCardContent>
         <LineChart width={400} height={100} data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
             <Line
               type="monotone"
               dataKey="probability"

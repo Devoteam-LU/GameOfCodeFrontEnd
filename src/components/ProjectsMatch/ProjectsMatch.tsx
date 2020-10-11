@@ -37,12 +37,17 @@ const ProjectsMatch: React.FC = () => {
     <>
       {interestingProjects && (
         <>
-          <span style={{marginLeft: '16'}}><h1>Suggested for you</h1></span>
-            {interestingProjects.map((i) => {
-              return (
-                  <ProjectCard key={"suggestedProject_" + i.createdByUserId + "_" + i.id} project={i} />
-              );
-            })}
+          <div>
+            <h1 style={{ marginLeft: "16px !important" }}>Suggested for you</h1>
+          </div>
+          {interestingProjects.map((i) => {
+            return (
+              <ProjectCard
+                key={"suggestedProject_" + i.createdByUserId + "_" + i.id}
+                project={i}
+              />
+            );
+          })}
         </>
       )}
     </>
