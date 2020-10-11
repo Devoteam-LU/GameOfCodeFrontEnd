@@ -41,7 +41,7 @@ const Match: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Privilege</IonTitle>
+          <IonTitle>Match</IonTitle>
           <IonButtons slot="end">
             <IonMenuButton />
           </IonButtons>
