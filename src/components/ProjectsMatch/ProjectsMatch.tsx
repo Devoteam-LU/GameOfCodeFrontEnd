@@ -38,7 +38,7 @@ const ProjectsMatch: React.FC = () => {
       {interestingProjects && (
         <>
           <div>
-            <h1 style={{ marginLeft: "16px !important" }}>Suggested for you</h1>
+          <h1 style={{ marginLeft: "16px !important" }}>&nbsp;&nbsp;Suggested for you</h1>
           </div>
           {interestingProjects.map((i) => {
             return (

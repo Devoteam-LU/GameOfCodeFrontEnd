@@ -93,10 +93,9 @@ const LifeTabPage: React.FC = () => {
           <IonGrid>
             <IonRow>
               <IonCol size="5">
-                <IonLabel>Linked Accounts</IonLabel>
-              </IonCol>
-              <IonCol size="2">
-                <LinkIcon />
+                <IonLabel>
+                  Linked Accounts <LinkIcon />
+                </IonLabel>
               </IonCol>
               <IonCol size="5" align-self="end">
                 <FacebookIcon />
