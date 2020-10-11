@@ -47,6 +47,7 @@ import {
 import ProfitLossCard from "../components/ProfitLossCard/ProfitLossCard";
 import ChartCard from "../components/ChartCard/ChartCard";
 import { AuthContext } from "../modules/auth";
+import { Link } from "react-router-dom";
 
 const LifeTabPage: React.FC = () => {
   const { user } = useContext(AuthContext);
@@ -88,21 +89,23 @@ const LifeTabPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonGrid>
-          <IonRow>
-            <IonCol size="5">
-              <IonLabel>Linked Accounts</IonLabel>
-            </IonCol>
-            <IonCol size="2">
-              <LinkIcon />
-            </IonCol>
-            <IonCol size="5" align-self="end">
-              <FacebookIcon />
-              <TwitterIcon />
-              <AddIcon></AddIcon>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
+        <Link to="/consent">
+          <IonGrid>
+            <IonRow>
+              <IonCol size="5">
+                <IonLabel>Linked Accounts</IonLabel>
+              </IonCol>
+              <IonCol size="2">
+                <LinkIcon />
+              </IonCol>
+              <IonCol size="5" align-self="end">
+                <FacebookIcon />
+                <TwitterIcon />
+                <AddIcon></AddIcon>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        </Link>
         {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
         <ChartCard />
         <div style={{ display: "flex", padding: "0 16px" }}>
