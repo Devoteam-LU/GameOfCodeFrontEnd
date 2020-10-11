@@ -26,7 +26,7 @@ const DealTabPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle><IonLabel color="primary">Deal</IonLabel></IonTitle>
+          <IonTitle><IonLabel color="tertiary">Deal</IonLabel></IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
