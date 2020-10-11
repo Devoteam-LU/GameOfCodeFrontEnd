@@ -20,14 +20,16 @@ const LifeTabPage: React.FC = () => {
   const [applicationUserApi] = useState<ApplicationUserApi>(
     new ApplicationUserApi(getApiUrl2())
   );
+  let amount=[10,100,500,1000,5000,7500,10000,50000,100000];
 
-  let proba=[0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574];
+
+  let proba=[0.9100000162919363,0.9100000162919363,0.9100000162919363,0.9100000162919363,0.9100000162919363,0.6000000089406967,0.6000000089406967,0.6000000089406967,0.6000000089406967];
 
   let data =[];
   var i;
-  for (i = 0; i < 9; i++) { 
+  for (i = 0; i < amount.length; i++) { 
     data.push({
-      amount: ""+i,
+      amount: amount[i],
       probability: proba[i]
     });
   }
@@ -36,7 +38,7 @@ const LifeTabPage: React.FC = () => {
     baseURL: getApiUrl2(),
   });
   api
-    .get("http://ncarrara.northeurope.cloudapp.azure.com:8080/api/DF5A07B6-2880-4411-84F1-5F62153B0882", {
+    .post("/prod", {
     })
     .then((res) => {
       console.log(res.data)
@@ -89,7 +91,7 @@ const LifeTabPage: React.FC = () => {
           </IonHeader>
           <LineChart width={270} height={100} data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <Line type="monotone" dataKey="proba" stroke="#8884d8" strokeWidth={2} />
+                <Line type="monotone" dataKey="probability" stroke="#8884d8" strokeWidth={2} />
           </LineChart>
           <Collapsible trigger="Account Status" color="primary">
               <IonList>
