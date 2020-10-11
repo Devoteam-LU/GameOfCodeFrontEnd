@@ -79,16 +79,7 @@ const LifeTabPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonGrid>
-            <IonRow>
-              <IonCol>
-                <IonHeader>Life</IonHeader>
-              </IonCol>
-              <IonCol size="10">
-                <IonSearchbar></IonSearchbar>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+          <IonTitle>Life</IonTitle>
           <IonButtons slot="end">
             <IonMenuButton />
           </IonButtons>

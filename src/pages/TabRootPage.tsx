@@ -43,7 +43,7 @@ import LoginPage from "./Login";
             </IonTabButton>
             <IonTabButton tab="match" href="/tabs/match">
               <FavoriteBorderIcon color="primary"/>
-              <IonLabel color="primary">Match</IonLabel>
+              <IonLabel color="primary">Privilege</IonLabel>
             </IonTabButton>
             <IonTabButton tab="deal" href="/tabs/deal">
               <SupervisorAccountIcon color="primary"/>
