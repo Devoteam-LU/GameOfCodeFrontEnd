@@ -8,10 +8,9 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
-  IonSplitPane
+  IonSplitPane,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -35,26 +34,28 @@ import LoginPage from "./pages/Login";
 import MenuPrivilege from "./components/MenuPrivilege";
 import TabRootPage from "./pages/TabRootPage";
 import { AuthContext } from "./modules/auth";
+import { ConsentPage } from "./pages/ConsentPage";
 
 const App: React.FC = () => {
   const { isAuthenticated } = useContext(AuthContext);
   return (
     <IonApp>
       {isAuthenticated ? (
-          <IonReactRouter>
-            <IonSplitPane contentId="main">
-                <MenuPrivilege />
-                <IonRouterOutlet id="main">
-                  <Route path="/tabs" component={TabRootPage} />
-                  <Redirect from="/" to="/tabs/life" exact />
-                </IonRouterOutlet>
-              </IonSplitPane>  
-            </IonReactRouter>  
+        <IonReactRouter>
+          <IonSplitPane contentId="main">
+            <MenuPrivilege />
+            <IonRouterOutlet id="main">
+              <Route path="/consent" component={ConsentPage} />
+              <Route path="/tabs" component={TabRootPage} />
+              <Redirect from="/" to="/tabs/life" exact />
+            </IonRouterOutlet>
+          </IonSplitPane>
+        </IonReactRouter>
       ) : (
-          <IonReactRouter>
-            <Route path="/login" component={LoginPage} exact />
-            <Redirect from="/" to="/login" exact />
-          </IonReactRouter>
+        <IonReactRouter>
+          <Route path="/login" component={LoginPage} exact />
+          <Redirect from="/" to="/login" exact />
+        </IonReactRouter>
       )}
     </IonApp>
   );

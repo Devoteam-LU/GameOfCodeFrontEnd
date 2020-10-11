@@ -47,6 +47,7 @@ import {
 import ProfitLossCard from "../components/ProfitLossCard/ProfitLossCard";
 import ChartCard from "../components/ChartCard/ChartCard";
 import { AuthContext } from "../modules/auth";
+import { Link } from "react-router-dom";
 
 const LifeTabPage: React.FC = () => {
   const { user } = useContext(AuthContext);
@@ -88,46 +89,35 @@ const LifeTabPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <div style={{ background: "#EBEBEB" }}>
-          <IonGrid>
-            <IonRow>
-              <IonCol size="5">
-                <IonLabel>Linked Accounts</IonLabel>
-              </IonCol>
-              <IonCol size="2">
-                <LinkIcon />
-              </IonCol>
-              <IonCol size="5" align-self="end">
-                <FacebookIcon />
-                <TwitterIcon />
-                <AddIcon></AddIcon>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-          {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
-          <ChartCard />
-          <div style={{ display: "flex", padding: "0 16px" }}>
-            <h5 style={{ flex: 1 }}>
-              <IonLabel color="tertiary">Borrowing capacity</IonLabel>
-            </h5>
-            <h5><IonLabel color="tertiary">900€</IonLabel></h5>
+        <Link to="/consent">
+          <div style={{ display: "flex", margin: "0 16px", marginBottom: -10 }}>
+            <h6 style={{ flex: 1 }}>Consent & Data</h6>
+            <h6>
+              <AddIcon />
+            </h6>
           </div>
-          <div style={{ display: "flex", padding: "0 16px" }}>
-            <h5 style={{ flex: 1 }}><IonLabel color="tertiary">You've helped 8 People</IonLabel></h5>
-            <h5><IonLabel color="tertiary">500$</IonLabel></h5>
-          </div>
-          <div style={{ display: "flex", padding: "0 16px" }}>
-            <h5 style={{ flex: 1 }}><IonLabel color="tertiary">You owe 1 Person</IonLabel></h5>
-            <h5><IonLabel color="tertiary">1000$</IonLabel></h5>
-          </div>
-          <div style={{ display: "flex", padding: "0 16px" }}>
-            <h5 style={{ flex: 1 }}><IonLabel color="tertiary">Credit Score</IonLabel></h5>
-            <h5><IonLabel color="tertiary">{user?.creditScore}</IonLabel></h5>
-          </div>
-          <div style={{ display: "flex", padding: "0 16px" }}>
-            <h5 style={{ flex: 1 }}><IonLabel color="tertiary">APY</IonLabel></h5>
-            <h5><IonLabel color="tertiary">{user?.apy}</IonLabel></h5>
-          </div>
+        </Link>
+        {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
+        <ChartCard />
+        <div style={{ display: "flex", padding: "0 16px" }}>
+          <h5 style={{ flex: 1 }}>Borrowing capacity</h5>
+          <h5>900€</h5>
+        </div>
+        <div style={{ display: "flex", padding: "0 16px" }}>
+          <h5 style={{ flex: 1 }}>You've helped 8 People</h5>
+          <h5>500$</h5>
+        </div>
+        <div style={{ display: "flex", padding: "0 16px" }}>
+          <h5 style={{ flex: 1 }}>You owe 1 Person</h5>
+          <h5>1000$</h5>
+        </div>
+        <div style={{ display: "flex", padding: "0 16px" }}>
+          <h5 style={{ flex: 1 }}>Credit Score</h5>
+          <h5>{user?.creditScore}</h5>
+        </div>
+        <div style={{ display: "flex", padding: "0 16px" }}>
+          <h5 style={{ flex: 1 }}>APY</h5>
+          <h5>{user?.apy}</h5>
         </div>
       </IonContent>
     </IonPage>
