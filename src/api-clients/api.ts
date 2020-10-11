@@ -523,6 +523,47 @@ export class ContractApi {
         }
         return Promise.resolve<UserBorrowLendSituationDto>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    listByUserIdAll(): Promise<ContractDto[]> {
+        let url_ = this.baseUrl + "/api/Contract/ListByUserId";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processListByUserIdAll(_response);
+        });
+    }
+
+    protected processListByUserIdAll(response: Response): Promise<ContractDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ContractDto.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ContractDto[]>(<any>null);
+    }
 }
 
 export class LenderProjectApi {
@@ -1042,9 +1083,15 @@ export class ContractDto implements IContractDto {
     contractStatusId?: number;
     lenderProjectId?: number;
     expiration?: Date;
+    creationDate?: Date;
     clause?: string | undefined;
     amount?: number;
     interestRate?: number;
+    projectOwnerFirstName?: string | undefined;
+    projectOwnerLastName?: string | undefined;
+    dealerFirstName?: string | undefined;
+    dealerLastName?: string | undefined;
+    projectTitle?: string | undefined;
 
     constructor(data?: IContractDto) {
         if (data) {
@@ -1062,9 +1109,15 @@ export class ContractDto implements IContractDto {
             this.contractStatusId = _data["contractStatusId"];
             this.lenderProjectId = _data["lenderProjectId"];
             this.expiration = _data["expiration"] ? new Date(_data["expiration"].toString()) : <any>undefined;
+            this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
             this.clause = _data["clause"];
             this.amount = _data["amount"];
             this.interestRate = _data["interestRate"];
+            this.projectOwnerFirstName = _data["projectOwnerFirstName"];
+            this.projectOwnerLastName = _data["projectOwnerLastName"];
+            this.dealerFirstName = _data["dealerFirstName"];
+            this.dealerLastName = _data["dealerLastName"];
+            this.projectTitle = _data["projectTitle"];
         }
     }
 
@@ -1082,9 +1135,15 @@ export class ContractDto implements IContractDto {
         data["contractStatusId"] = this.contractStatusId;
         data["lenderProjectId"] = this.lenderProjectId;
         data["expiration"] = this.expiration ? this.expiration.toISOString() : <any>undefined;
+        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         data["clause"] = this.clause;
         data["amount"] = this.amount;
         data["interestRate"] = this.interestRate;
+        data["projectOwnerFirstName"] = this.projectOwnerFirstName;
+        data["projectOwnerLastName"] = this.projectOwnerLastName;
+        data["dealerFirstName"] = this.dealerFirstName;
+        data["dealerLastName"] = this.dealerLastName;
+        data["projectTitle"] = this.projectTitle;
         return data; 
     }
 }
@@ -1095,9 +1154,15 @@ export interface IContractDto {
     contractStatusId?: number;
     lenderProjectId?: number;
     expiration?: Date;
+    creationDate?: Date;
     clause?: string | undefined;
     amount?: number;
     interestRate?: number;
+    projectOwnerFirstName?: string | undefined;
+    projectOwnerLastName?: string | undefined;
+    dealerFirstName?: string | undefined;
+    dealerLastName?: string | undefined;
+    projectTitle?: string | undefined;
 }
 
 export class UserBorrowLendSituationDto implements IUserBorrowLendSituationDto {

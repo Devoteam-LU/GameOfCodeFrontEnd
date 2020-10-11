@@ -10,23 +10,36 @@ import {
   IonLabel,
   IonRow,
 } from "@ionic/react";
-import React from "react";
+import React, { useContext } from "react";
 import { UserBorrowLendSituationDto } from "../../api-clients/api";
+import { AuthContext } from "../../modules/auth";
 
 interface IProps {
   profitLoss: UserBorrowLendSituationDto;
 }
 
 export default function ProfitLossCard({ profitLoss }: IProps) {
+  const { user } = useContext(AuthContext);
   return (
     <>
-      {profitLoss != null && (
+      {user != null && user.apy != null && profitLoss != null && (
         <IonCard>
           <IonCardHeader>
-            <IonCardSubtitle>Profit loss</IonCardSubtitle>
-            <IonCardTitle style={{color: "green"}}>
-              {profitLoss.totalLossProfit != null && profitLoss.totalLossProfit < 0 ? "-" : "+"}
-              {profitLoss.totalLossProfit?.toFixed(2)} €
+            <IonCardSubtitle>
+              <span>Profit loss</span>
+              <span style={{ float: "right" }}>Credit score | APY</span>
+            </IonCardSubtitle>
+            <IonCardTitle style={{ color: "green" }}>
+              <span>
+                {profitLoss.totalLossProfit != null &&
+                profitLoss.totalLossProfit < 0
+                  ? "-"
+                  : "+"}
+                {profitLoss.totalLossProfit?.toFixed(2)} €
+              </span>
+              <span style={{ float: "right" }}>
+                {user?.creditScore} | {(user.apy * 100).toFixed(1)} %
+              </span>
             </IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
@@ -42,16 +55,19 @@ export default function ProfitLossCard({ profitLoss }: IProps) {
 
               <IonRow>
                 <IonCol>
-                  <h2>€ {profitLoss.totalBorrowingAmount?.toFixed(2)} (€ {profitLoss.borrowLossProfit?.toFixed(2)})</h2>
+                  <h2>
+                    € {profitLoss.totalBorrowingAmount?.toFixed(2)} (€{" "}
+                    {profitLoss.borrowLossProfit?.toFixed(2)})
+                  </h2>
                 </IonCol>
                 <IonCol style={{ textAlign: "right" }}>
                   <h2>
-                  <h2>€ {profitLoss.totalLendingAmount?.toFixed(2)} (€ {profitLoss.lendLossProfit?.toFixed(2)})</h2>
+                    € {profitLoss.totalLendingAmount?.toFixed(2)} (€{" "}
+                    {profitLoss.lendLossProfit?.toFixed(2)})
                   </h2>
                 </IonCol>
               </IonRow>
-
-          </IonGrid>
+            </IonGrid>
           </IonCardContent>
         </IonCard>
       )}
