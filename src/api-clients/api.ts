@@ -40,7 +40,7 @@ export const isLoggedin = () => {
   };
 
 export const getApiUrl = () => "https://privilege-api.azurewebsites.net";
-
+export const getApiUrl2 = () => "https://86q8wrw5v7.execute-api.us-east-2.amazonaws.com";
 
 
 
@@ -142,6 +142,51 @@ export class ApplicationUserApi {
         }
         return Promise.resolve<string>(<any>null);
     }
+
+
+/**
+     * @param body (optional) 
+     * @return Success
+     */
+    probality(body: any): Promise<string> {
+        let url_ = "/prod";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "2,2020-10-10 09:39:26.000156,52,5,2,0,1,1,1,1,1,25281.0,28724.0,12692.0,0.215748682,0.952505649,0.7738,256.7148682,18486.0,15102.0,5226.0,2224.0,1724.0,1063.0,648.0,F,False,CBC35BF6-031F-401F-934A-733F00172EAF,None,1000";
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "text/csv"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processProbality(_response);
+        });
+    }
+
+    protected processProbality(response: Response): Promise<string> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<string>(<any>null);
+    }
+
+
+
 
     /**
      * @param body (optional) 

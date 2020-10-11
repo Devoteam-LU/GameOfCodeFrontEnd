@@ -1,43 +1,50 @@
-import React from 'react';
+
+import React, { useContext, useState } from "react";
 import  Collapsible   from 'react-collapsible';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonMenuButton, IonSearchbar, IonListHeader,
   IonRow, IonGrid,IonCol, IonAvatar, IonLabel, IonList, IonItem, IonCard, IonCardHeader, IonCardContent  } from '@ionic/react';
+import axios from "axios";
 import ExploreContainer from '../components/ExploreContainer';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import AddIcon from '@material-ui/icons/Add';
 import LinkIcon from '@material-ui/icons/Link';
 import './LifeTabPage.css';
+import { ApplicationUserApi, getApiUrl2 } from "../api-clients/api";
 
 
 const LifeTabPage: React.FC = () => {
-  
-  const data = [
-    {
-      name: 'Page A', uv: 4000, pv: 2400, amt: 2400,
-    },
-    {
-      name: 'Page B', uv: 3000, pv: 1398, amt: 2210,
-    },
-    {
-      name: 'Page C', uv: 2000, pv: 9800, amt: 2290,
-    },
-    {
-      name: 'Page D', uv: 2780, pv: 3908, amt: 2000,
-    },
-    {
-      name: 'Page E', uv: 1890, pv: 4800, amt: 2181,
-    },
-    {
-      name: 'Page F', uv: 2390, pv: 3800, amt: 2500,
-    },
-    {
-      name: 'Page G', uv: 3490, pv: 4300, amt: 2100,
-    },
-  ];
+  const [applicationUserApi] = useState<ApplicationUserApi>(
+    new ApplicationUserApi(getApiUrl2())
+  );
+
+  let proba=[0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574];
+
+  let data =[];
+  var i;
+  for (i = 0; i < 9; i++) { 
+    data.push({
+      amount: ""+i,
+      probability: proba[i]
+    });
+  }
+
+  const api = axios.create({
+    baseURL: getApiUrl2(),
+  });
+  api
+    .get("http://ncarrara.northeurope.cloudapp.azure.com:8080/api/DF5A07B6-2880-4411-84F1-5F62153B0882", {
+    })
+    .then((res) => {
+      console.log(res.data)
+    })
+    .catch((error) => {
+      console.log("ERREUR")
+    });
+
 
   return (
     <IonPage>
@@ -80,13 +87,10 @@ const LifeTabPage: React.FC = () => {
               </IonRow>
             </IonGrid>
           </IonHeader>
-          <IonCard>
-            <IonCardContent>
-              <LineChart width={300} height={100} data={data}>
-                <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeWidth={2} />
-              </LineChart>
-            </IonCardContent>
-          </IonCard>
+          <LineChart width={270} height={100} data={data}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <Line type="monotone" dataKey="proba" stroke="#8884d8" strokeWidth={2} />
+          </LineChart>
           <Collapsible trigger="Account Status" color="primary">
               <IonList>
                 <IonItem>
@@ -106,22 +110,7 @@ const LifeTabPage: React.FC = () => {
                 </IonItem>
               </IonList>
             </Collapsible>
-          <Collapsible trigger="Recent Transactions">
-              <IonList>
-                <IonItem>
-                  <IonAvatar slot="start">
-                    <img src="./assets/avatar-han.png"></img>
-                  </IonAvatar>
-                  <IonLabel>Pokémon Yellow</IonLabel>
-                </IonItem>
-                <IonItem >
-                <IonAvatar slot="start">
-                    <img src="./assets/avatar-han.png"></img>
-                  </IonAvatar>
-                  <IonLabel>Mega Man X</IonLabel>
-                </IonItem>
-              </IonList>
-            </Collapsible>
+
         </div>
       </IonContent>
     </IonPage>
