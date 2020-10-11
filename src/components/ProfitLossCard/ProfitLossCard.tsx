@@ -56,14 +56,18 @@ export default function ProfitLossCard({ profitLoss }: IProps) {
               <IonRow>
                 <IonCol>
                   <h2>
-                    € {profitLoss.totalBorrowingAmount?.toFixed(2)} (€{" "}
-                    {profitLoss.borrowLossProfit?.toFixed(2)})
+                    <IonLabel color="tertiary">
+                      € {profitLoss.totalBorrowingAmount?.toFixed(2)} (€{" "}
+                      {profitLoss.borrowLossProfit?.toFixed(2)})
+                    </IonLabel>
                   </h2>
                 </IonCol>
                 <IonCol style={{ textAlign: "right" }}>
                   <h2>
-                    € {profitLoss.totalLendingAmount?.toFixed(2)} (€{" "}
-                    {profitLoss.lendLossProfit?.toFixed(2)})
+                    <IonLabel color="tertiary">
+                      € {profitLoss.totalLendingAmount?.toFixed(2)} (€{" "}
+                      {profitLoss.lendLossProfit?.toFixed(2)})
+                    </IonLabel>
                   </h2>
                 </IonCol>
               </IonRow>

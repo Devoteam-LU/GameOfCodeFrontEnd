@@ -89,35 +89,39 @@ const LifeTabPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <Link to="/consent">
-          <div style={{ display: "flex", margin: "0 16px", marginBottom: -10 }}>
-            <h6 style={{ flex: 1 }}>Consent & Data</h6>
-            <h6>
-              <AddIcon />
-            </h6>
+        <div style={{ background: "#EBEBEB" }}>
+          <Link to="/consent">
+            <div
+              style={{ display: "flex", margin: "0 16px", marginBottom: -10 }}
+            >
+              <h6 style={{ flex: 1 }}>Consent & Data</h6>
+              <h6>
+                <AddIcon />
+              </h6>
+            </div>
+          </Link>
+          {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
+          <ChartCard />
+          <div style={{ display: "flex", padding: "0 16px" }}>
+            <h5 style={{ flex: 1 }}>Borrowing capacity</h5>
+            <h5>900€</h5>
           </div>
-        </Link>
-        {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
-        <ChartCard />
-        <div style={{ display: "flex", padding: "0 16px" }}>
-          <h5 style={{ flex: 1 }}>Borrowing capacity</h5>
-          <h5>900€</h5>
-        </div>
-        <div style={{ display: "flex", padding: "0 16px" }}>
-          <h5 style={{ flex: 1 }}>You've helped 8 People</h5>
-          <h5>500$</h5>
-        </div>
-        <div style={{ display: "flex", padding: "0 16px" }}>
-          <h5 style={{ flex: 1 }}>You owe 1 Person</h5>
-          <h5>1000$</h5>
-        </div>
-        <div style={{ display: "flex", padding: "0 16px" }}>
-          <h5 style={{ flex: 1 }}>Credit Score</h5>
-          <h5>{user?.creditScore}</h5>
-        </div>
-        <div style={{ display: "flex", padding: "0 16px" }}>
-          <h5 style={{ flex: 1 }}>APY</h5>
-          <h5>{user?.apy}</h5>
+          <div style={{ display: "flex", padding: "0 16px" }}>
+            <h5 style={{ flex: 1 }}>You've helped 8 People</h5>
+            <h5>500$</h5>
+          </div>
+          <div style={{ display: "flex", padding: "0 16px" }}>
+            <h5 style={{ flex: 1 }}>You owe 1 Person</h5>
+            <h5>1000$</h5>
+          </div>
+          <div style={{ display: "flex", padding: "0 16px" }}>
+            <h5 style={{ flex: 1 }}>Credit Score</h5>
+            <h5>{user?.creditScore}</h5>
+          </div>
+          <div style={{ display: "flex", padding: "0 16px" }}>
+            <h5 style={{ flex: 1 }}>APY</h5>
+            <h5>{user?.apy}</h5>
+          </div>
         </div>
       </IonContent>
     </IonPage>
