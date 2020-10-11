@@ -1,5 +1,5 @@
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import  Collapsible   from 'react-collapsible';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -13,13 +13,25 @@ import TwitterIcon from '@material-ui/icons/Twitter';
 import AddIcon from '@material-ui/icons/Add';
 import LinkIcon from '@material-ui/icons/Link';
 import './LifeTabPage.css';
-import { ApplicationUserApi, getApiUrl2 } from "../api-clients/api";
+import { ApplicationUserApi, ContractApi, getApiUrl, getApiUrl2, UserBorrowLendSituationDto } from "../api-clients/api";
+import ProfitLossCard from "../components/ProfitLossCard/ProfitLossCard";
 
 
 const LifeTabPage: React.FC = () => {
   const [applicationUserApi] = useState<ApplicationUserApi>(
     new ApplicationUserApi(getApiUrl2())
   );
+  const [contractApi, setContractApi] = useState<ContractApi>(
+    new ContractApi(getApiUrl())
+  );
+  const [profitLoss, setProfitLoss] = useState<UserBorrowLendSituationDto>();
+
+  useEffect(() => {
+    contractApi.userSituation()
+    .then(res => setProfitLoss(res))
+    .catch(err => console.log(err));
+  }, []);
+
 
   let proba=[0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574,0.585790872574];
 
@@ -83,6 +95,11 @@ const LifeTabPage: React.FC = () => {
                   <FacebookIcon/>
                   <TwitterIcon />
                   <AddIcon></AddIcon>
+                </IonCol>
+              </IonRow>
+              <IonRow>
+                <IonCol>
+                  {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
                 </IonCol>
               </IonRow>
             </IonGrid>
