@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   IonContent,
   IonHeader,
+  IonLabel,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -25,7 +26,7 @@ const DealTabPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Deal</IonTitle>
+          <IonTitle><IonLabel color="primary">Deal</IonLabel></IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
