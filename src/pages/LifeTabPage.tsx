@@ -86,69 +86,67 @@ const LifeTabPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <div className="ion-padding">
-          <IonGrid>
-            <IonRow>
-              <IonCol size="5">
-                <IonLabel>Linked Accounts</IonLabel>
-              </IonCol>
-              <IonCol size="2">
-                <LinkIcon />
-              </IonCol>
-              <IonCol size="5" align-self="end">
-                <FacebookIcon />
-                <TwitterIcon />
-                <AddIcon></AddIcon>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-          {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
-          <ChartCard />
-          <Collapsible trigger="Account Status" color="primary">
-            <IonList>
-              <IonItem>
-                <IonRow>
-                  <IonCol size="10">
+        <IonGrid>
+          <IonRow>
+            <IonCol size="5">
+              <IonLabel>Linked Accounts</IonLabel>
+            </IonCol>
+            <IonCol size="2">
+              <LinkIcon />
+            </IonCol>
+            <IonCol size="5" align-self="end">
+              <FacebookIcon />
+              <TwitterIcon />
+              <AddIcon></AddIcon>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+        {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
+        <ChartCard />
+        <Collapsible trigger="Account Status" color="primary">
+          <IonList>
+            <IonItem>
+              <IonRow>
+                <IonCol size="10">
                   <IonLabel>Borrowing capacity</IonLabel>
-                  </IonCol>
-                  <IonCol >
-                    <IonLabel>900$</IonLabel>
-                  </IonCol>
-                </IonRow>
-              </IonItem>
-              <IonItem>
-                <IonRow>
-                    <IonCol size="10">
-                    <IonLabel>You've helped 8 People</IonLabel>
-                    </IonCol>
-                    <IonCol >
-                      <IonLabel>500$</IonLabel>
-                    </IonCol>
-                </IonRow>
-              </IonItem>
-              <IonItem>
-                <IonRow>
-                    <IonCol size="10">
-                    <IonLabel>You owe 1 Person</IonLabel>
-                    </IonCol>
-                    <IonCol >
-                      <IonLabel>100$</IonLabel>
-                    </IonCol>
-                </IonRow>
-              </IonItem>
-              <IonItem>
-                <IonRow>
-                    <IonCol size="10">
-                    <IonLabel>Credit Score</IonLabel>
-                    </IonCol>
-                    <IonCol >
-                      <IonLabel>68.0</IonLabel>
-                    </IonCol>
-                </IonRow>
-              </IonItem>
-            </IonList>
-          </Collapsible>
-        </div>
+                </IonCol>
+                <IonCol>
+                  <IonLabel>900$</IonLabel>
+                </IonCol>
+              </IonRow>
+            </IonItem>
+            <IonItem>
+              <IonRow>
+                <IonCol size="10">
+                  <IonLabel>You've helped 8 People</IonLabel>
+                </IonCol>
+                <IonCol>
+                  <IonLabel>500$</IonLabel>
+                </IonCol>
+              </IonRow>
+            </IonItem>
+            <IonItem>
+              <IonRow>
+                <IonCol size="10">
+                  <IonLabel>You owe 1 Person</IonLabel>
+                </IonCol>
+                <IonCol>
+                  <IonLabel>100$</IonLabel>
+                </IonCol>
+              </IonRow>
+            </IonItem>
+            <IonItem>
+              <IonRow>
+                <IonCol size="10">
+                  <IonLabel>Credit Score</IonLabel>
+                </IonCol>
+                <IonCol>
+                  <IonLabel>68.0</IonLabel>
+                </IonCol>
+              </IonRow>
+            </IonItem>
+          </IonList>
+        </Collapsible>
       </IonContent>
     </IonPage>
   );
