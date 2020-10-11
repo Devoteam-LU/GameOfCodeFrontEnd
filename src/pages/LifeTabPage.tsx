@@ -45,6 +45,7 @@ import {
   UserBorrowLendSituationDto,
 } from "../api-clients/api";
 import ProfitLossCard from "../components/ProfitLossCard/ProfitLossCard";
+import ChartCard from "../components/ChartCard/ChartCard";
 
 const LifeTabPage: React.FC = () => {
   const [applicationUserApi] = useState<ApplicationUserApi>(
@@ -61,29 +62,6 @@ const LifeTabPage: React.FC = () => {
       .then((res) => setProfitLoss(res))
       .catch((err) => console.log(err));
   }, []);
-
-  let amount = [10, 100, 500, 1000, 5000, 7500, 10000, 50000, 100000];
-
-  let proba = [
-    0.9100000162919363,
-    0.9100000162919363,
-    0.9100000162919363,
-    0.9100000162919363,
-    0.9100000162919363,
-    0.6000000089406967,
-    0.6000000089406967,
-    0.6000000089406967,
-    0.6000000089406967,
-  ];
-
-  let data = [];
-  var i;
-  for (i = 0; i < amount.length; i++) {
-    data.push({
-      amount: amount[i],
-      probability: proba[i],
-    });
-  }
 
   const api = axios.create({
     baseURL: getApiUrl2(),
@@ -134,15 +112,7 @@ const LifeTabPage: React.FC = () => {
             </IonRow>
           </IonGrid>
           {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
-          <LineChart width={270} height={100} data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <Line
-              type="monotone"
-              dataKey="probability"
-              stroke="#8884d8"
-              strokeWidth={2}
-            />
-          </LineChart>
+          <ChartCard />
           <Collapsible trigger="Account Status" color="primary">
             <IonList>
               <IonItem>
