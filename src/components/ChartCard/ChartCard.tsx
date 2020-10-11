@@ -40,10 +40,9 @@ export default function ChartCard() {
   return (
     <IonCard>
       <IonCardHeader>
-        <IonCardSubtitle>Chart</IonCardSubtitle>
+        <IonCardSubtitle>Repayment probability</IonCardSubtitle>
         <IonCardTitle></IonCardTitle>
       </IonCardHeader>
-
       <IonCardContent>
         <ResponsiveContainer height={100}>
           <LineChart height={100} data={data}>

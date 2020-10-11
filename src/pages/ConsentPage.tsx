@@ -11,6 +11,8 @@ import {
   IonLabel,
   IonItemDivider,
   IonIcon,
+  IonButtons,
+  IonBackButton,
 } from "@ionic/react";
 import {
   checkmark,
@@ -26,6 +28,9 @@ export const ConsentPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="home" />
+          </IonButtons>
           <IonTitle>Data & Consent</IonTitle>
         </IonToolbar>
       </IonHeader>
