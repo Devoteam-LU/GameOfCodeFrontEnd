@@ -46,8 +46,10 @@ import {
 } from "../api-clients/api";
 import ProfitLossCard from "../components/ProfitLossCard/ProfitLossCard";
 import ChartCard from "../components/ChartCard/ChartCard";
+import { AuthContext } from "../modules/auth";
 
 const LifeTabPage: React.FC = () => {
+  const { user } = useContext(AuthContext);
   const [applicationUserApi] = useState<ApplicationUserApi>(
     new ApplicationUserApi(getApiUrl2())
   );
@@ -103,50 +105,26 @@ const LifeTabPage: React.FC = () => {
         </IonGrid>
         {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
         <ChartCard />
-        <Collapsible trigger="Account Status" color="primary">
-          <IonList>
-            <IonItem>
-              <IonRow>
-                <IonCol size="10">
-                  <IonLabel>Borrowing capacity</IonLabel>
-                </IonCol>
-                <IonCol>
-                  <IonLabel>900$</IonLabel>
-                </IonCol>
-              </IonRow>
-            </IonItem>
-            <IonItem>
-              <IonRow>
-                <IonCol size="10">
-                  <IonLabel>You've helped 8 People</IonLabel>
-                </IonCol>
-                <IonCol>
-                  <IonLabel>500$</IonLabel>
-                </IonCol>
-              </IonRow>
-            </IonItem>
-            <IonItem>
-              <IonRow>
-                <IonCol size="10">
-                  <IonLabel>You owe 1 Person</IonLabel>
-                </IonCol>
-                <IonCol>
-                  <IonLabel>100$</IonLabel>
-                </IonCol>
-              </IonRow>
-            </IonItem>
-            <IonItem>
-              <IonRow>
-                <IonCol size="10">
-                  <IonLabel>Credit Score</IonLabel>
-                </IonCol>
-                <IonCol>
-                  <IonLabel>68.0</IonLabel>
-                </IonCol>
-              </IonRow>
-            </IonItem>
-          </IonList>
-        </Collapsible>
+        <div style={{ display: "flex", padding: "0 16px" }}>
+          <h5 style={{ flex: 1 }}>Borrowing capacity</h5>
+          <h5>900€</h5>
+        </div>
+        <div style={{ display: "flex", padding: "0 16px" }}>
+          <h5 style={{ flex: 1 }}>You've helped 8 People</h5>
+          <h5>500$</h5>
+        </div>
+        <div style={{ display: "flex", padding: "0 16px" }}>
+          <h5 style={{ flex: 1 }}>You owe 1 Person</h5>
+          <h5>1000$</h5>
+        </div>
+        <div style={{ display: "flex", padding: "0 16px" }}>
+          <h5 style={{ flex: 1 }}>Credit Score</h5>
+          <h5>{user?.creditScore}</h5>
+        </div>
+        <div style={{ display: "flex", padding: "0 16px" }}>
+          <h5 style={{ flex: 1 }}>APY</h5>
+          <h5>{user?.apy}</h5>
+        </div>
       </IonContent>
     </IonPage>
   );
