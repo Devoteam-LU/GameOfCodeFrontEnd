@@ -14,6 +14,11 @@ import {
   IonSearchbar,
   IonButtons,
   IonMenuButton,
+  IonCard,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonCardContent,
 } from "@ionic/react";
 import "./Match.css";
 import { UserInterestApi, getApiUrl } from "../../api-clients/api";
@@ -48,17 +53,24 @@ const Match: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonListHeader>My interests</IonListHeader>
-        <p>
-          {interests &&
-            interests.map((i) => {
-              return (
-                <IonChip key={i}>
-                  <IonLabel>{i}</IonLabel>
-                </IonChip>
-              );
-            })}
-        </p>
+        <IonCard>
+          <IonCardHeader>
+            <IonCardSubtitle></IonCardSubtitle>
+            <IonCardTitle>My interests</IonCardTitle>
+          </IonCardHeader>
+
+          <IonCardContent>
+            {interests &&
+              interests.map((i) => {
+                return (
+                  <IonChip key={i}>
+                    <IonLabel>{i}</IonLabel>
+                  </IonChip>
+                );
+              })}
+          </IonCardContent>
+        </IonCard>
+
         {/* <ProfilesMatch /> */}
         <ProjectsMatch />
       </IonContent>
