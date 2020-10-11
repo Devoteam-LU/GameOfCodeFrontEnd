@@ -107,19 +107,44 @@ const LifeTabPage: React.FC = () => {
           <Collapsible trigger="Account Status" color="primary">
             <IonList>
               <IonItem>
-                <IonLabel>Pokémon Yellow</IonLabel>
+                <IonRow>
+                  <IonCol size="10">
+                  <IonLabel>Borrowing capacity</IonLabel>
+                  </IonCol>
+                  <IonCol >
+                    <IonLabel>900$</IonLabel>
+                  </IonCol>
+                </IonRow>
               </IonItem>
               <IonItem>
-                <IonLabel>Mega Man X</IonLabel>
+                <IonRow>
+                    <IonCol size="10">
+                    <IonLabel>You've helped 8 People</IonLabel>
+                    </IonCol>
+                    <IonCol >
+                      <IonLabel>500$</IonLabel>
+                    </IonCol>
+                </IonRow>
               </IonItem>
               <IonItem>
-                <IonLabel>The Legend of Zelda</IonLabel>
+                <IonRow>
+                    <IonCol size="10">
+                    <IonLabel>You owe 1 Person</IonLabel>
+                    </IonCol>
+                    <IonCol >
+                      <IonLabel>100$</IonLabel>
+                    </IonCol>
+                </IonRow>
               </IonItem>
               <IonItem>
-                <IonLabel>Pac-Man</IonLabel>
-              </IonItem>
-              <IonItem>
-                <IonLabel>Super Mario World</IonLabel>
+                <IonRow>
+                    <IonCol size="10">
+                    <IonLabel>Credit Score</IonLabel>
+                    </IonCol>
+                    <IonCol >
+                      <IonLabel>68.0</IonLabel>
+                    </IonCol>
+                </IonRow>
               </IonItem>
             </IonList>
           </Collapsible>
