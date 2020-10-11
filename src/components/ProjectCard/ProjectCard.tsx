@@ -29,16 +29,10 @@ interface IProps {
 export default function ProjectCard({ project }: IProps) {
   return (
     <IonCard>
-      {/* {project.imageUrl && (
-        <img
-          style={{ maxHeight: "100px", textAlign: "left" }}
-          src={project.imageUrl}
-        />
-      )} */}
       <IonCardHeader>
         <IonCardSubtitle style={{ textAlign: "left" }}>
           <span>
-            {project.firstName} {project.lastName}
+            <IonLabel color="tertiary">{project.firstName} {project.lastName}</IonLabel>
           </span>
           <span style={{ float: "right" }}>Credit score | APY</span>
         </IonCardSubtitle>
@@ -46,7 +40,7 @@ export default function ProjectCard({ project }: IProps) {
           <span>{project.title}</span>
           {project != null && project.apy != null && (
           <span style={{ float: "right" }}>
-            {project?.creditScore} | {(project.apy * 100).toFixed(1)} %
+            <IonLabel color="success"> {project?.creditScore} | {(project.apy * 100).toFixed(1)} %</IonLabel>
           </span>
           )}
         </IonCardTitle>
@@ -54,8 +48,9 @@ export default function ProjectCard({ project }: IProps) {
 
       <IonCardContent>
         <div>
-          <p style={{ textAlign: "justify" }}>{project.description}</p>
+          <p style={{ textAlign: "justify" }}><IonLabel color="medium">{project.description}</IonLabel></p>
         </div>
+        <IonLabel color="dark">
         <h1 style={{ textAlign: "right" }}>€ {project.budget?.toFixed(2)}</h1>
         {project.interestRate != null && project.interestRate > 0 && (
           <h1 style={{ textAlign: "right" }}>
@@ -65,6 +60,7 @@ export default function ProjectCard({ project }: IProps) {
         {project.isInterestRateFlexible && (
           <h1 style={{ textAlign: "right" }}>Flexible interest rate</h1>
         )}
+        </IonLabel>
       </IonCardContent>
       <IonItem>
         <IonIcon

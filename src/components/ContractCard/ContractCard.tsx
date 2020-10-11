@@ -6,6 +6,7 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonItem,
+  IonLabel,
 } from "@ionic/react";
 import React from "react";
 import { ContractDto } from "../../api-clients/api";
@@ -30,15 +31,15 @@ export default function ContractCard({ contract, isNew }: IProps) {
   return (
     <IonCard>
       <IonCardHeader>
-        {isNew && "NEW!"}
+      <IonLabel color="warning">{isNew && "NEW!"}</IonLabel>
         <IonCardSubtitle style={{ textAlign: "left" }}>
           <div style={{ display: "flex" }}>
-            <span style={{ flex: 1 }}>{contract.projectTitle}</span>
+            <span style={{ flex: 1 }}><IonLabel color="tertiary">{contract.projectTitle}</IonLabel></span>
             {date}
           </div>
         </IonCardSubtitle>
         <IonCardTitle style={{ textAlign: "left" }}>
-          {contract.clause}
+        <IonLabel color="dark">{contract.clause}</IonLabel>
         </IonCardTitle>
         <IonCardSubtitle style={{ textAlign: "left" }}>
           <br />
@@ -63,7 +64,7 @@ export default function ContractCard({ contract, isNew }: IProps) {
       <IonCardContent></IonCardContent>
       {isNew && (
         <IonItem>
-          <IonButton color="warning" slot="end">
+          <IonButton color="danger" slot="end">
             Decline
           </IonButton>
           <IonButton color="tertiary" slot="end">
