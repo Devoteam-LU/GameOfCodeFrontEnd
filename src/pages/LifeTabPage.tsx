@@ -90,20 +90,12 @@ const LifeTabPage: React.FC = () => {
       </IonHeader>
       <IonContent fullscreen>
         <Link to="/consent">
-          <IonGrid>
-            <IonRow>
-              <IonCol size="5">
-                <IonLabel>
-                  Linked Accounts <LinkIcon />
-                </IonLabel>
-              </IonCol>
-              <IonCol size="5" align-self="end">
-                <FacebookIcon />
-                <TwitterIcon />
-                <AddIcon></AddIcon>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+          <div style={{ display: "flex", margin: "0 16px", marginBottom: -10 }}>
+            <h6 style={{ flex: 1 }}>Consent & Data</h6>
+            <h6>
+              <AddIcon />
+            </h6>
+          </div>
         </Link>
         {profitLoss && <ProfitLossCard profitLoss={profitLoss} />}
         <ChartCard />

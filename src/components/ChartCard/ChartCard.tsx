@@ -1,21 +1,19 @@
 import {
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonChip,
-    IonLabel,
-  } from "@ionic/react";
-  import React from "react";
-import { CartesianGrid, Line, LineChart } from "recharts";
-  import { UserDto } from "../../api-clients/api";
-  
-  interface IProps {
-  }
-  
-  export default function ChartCard() {
-      
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonChip,
+  IonLabel,
+} from "@ionic/react";
+import React from "react";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer } from "recharts";
+import { UserDto } from "../../api-clients/api";
+
+interface IProps {}
+
+export default function ChartCard() {
   let amount = [10, 100, 500, 1000, 5000, 7500, 10000, 50000, 100000];
 
   let proba = [
@@ -39,17 +37,16 @@ import { CartesianGrid, Line, LineChart } from "recharts";
     });
   }
 
-    return (
-      <IonCard>
-        <IonCardHeader>
-          <IonCardSubtitle>
-            Chart
-          </IonCardSubtitle>
-          <IonCardTitle></IonCardTitle>
-        </IonCardHeader>
-  
-        <IonCardContent>
-        <LineChart width={400} height={100} data={data}>
+  return (
+    <IonCard>
+      <IonCardHeader>
+        <IonCardSubtitle>Chart</IonCardSubtitle>
+        <IonCardTitle></IonCardTitle>
+      </IonCardHeader>
+
+      <IonCardContent>
+        <ResponsiveContainer height={100}>
+          <LineChart height={100} data={data}>
             <Line
               type="monotone"
               dataKey="probability"
@@ -57,8 +54,8 @@ import { CartesianGrid, Line, LineChart } from "recharts";
               strokeWidth={2}
             />
           </LineChart>
-        </IonCardContent>
-      </IonCard>
-    );
-  }
-  
+        </ResponsiveContainer>
+      </IonCardContent>
+    </IonCard>
+  );
+}
